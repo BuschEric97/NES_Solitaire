@@ -33,6 +33,15 @@ game_loop:
     ; get gamepad input
     jsr set_gamepad
 
+    ; increment seed to enhance pseudo-randomness
+    lda seed+1
+    clc 
+    adc #1
+    sta seed+1
+    lda seed
+    adc #0
+    sta seed
+
     lda #0
     sta CURSORMOVEMENT  ; reset movement byte
     ; see if dpad UP was pressed
