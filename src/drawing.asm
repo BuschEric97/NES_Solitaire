@@ -1,7 +1,9 @@
 .segment "ZEROPAGE"
     DRAWBGCARD: .res 1
     BGCARDID: .res 1
-    BGCARDTILENUM: .res 1
+    BGCARDTILEX: .res 1
+    BGCARDTILEY: .res 1
+    BGCARDTILENUM: .res 2
     BGCARDHBYTE: .res 1
     BGCARDLBYTE: .res 1
 
@@ -60,10 +62,38 @@ draw_bg_card:
     sta $2001
 
     ; get the high and low byte of the card position
-    ; TODO: calculate the value of the cursor as high and low byte
-    lda #$21
-    sta BGCARDHBYTE
+    ; BGCARDTILENUM == BGCARDTILEX + (BGCARDTILEY * 32)
+
+    ; BGCARDTILEY * 32
     lda #0
+    ldx #8
+    bg_card_mult_loop:
+        lsr BGCARDTILEY
+        bcc bg_card_mult_no_add
+        clc 
+        adc #32
+    bg_card_mult_no_add:
+        ror A
+        ror BGCARDTILENUM
+        dex 
+        bne bg_card_mult_loop
+    sta BGCARDTILENUM+1
+    
+    ; result + BGCARDTILEX
+    lda BGCARDTILENUM
+    clc 
+    adc BGCARDTILEX
+    sta BGCARDTILENUM
+    lda BGCARDTILENUM+1
+    adc #0
+    sta BGCARDTILENUM+1
+
+    ; store result in high and low byte
+    lda BGCARDTILENUM+1
+    clc 
+    adc #$20    ; and #$20 to high byte
+    sta BGCARDHBYTE
+    lda BGCARDTILENUM
     sta BGCARDLBYTE
 
     ; draw the card

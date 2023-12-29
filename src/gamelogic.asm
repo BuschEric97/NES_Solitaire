@@ -9,6 +9,13 @@ set_new_cursor_pos:
         ldx CURSORYPOS
         dex 
         stx CURSORYPOS
+        txa 
+        and #%00000111
+        cmp #%00000111
+        bne not_moving_up
+            ldx CURSORTILEYPOS
+            dex 
+            stx CURSORTILEYPOS
     not_moving_up:
     lda CURSORMOVEMENT
     and #%00000010
@@ -17,6 +24,13 @@ set_new_cursor_pos:
         ldx CURSORXPOS
         inx 
         stx CURSORXPOS
+        txa 
+        and #%00000111
+        cmp #%00000000
+        bne not_moving_right
+            ldx CURSORTILEXPOS
+            inx 
+            stx CURSORTILEXPOS
     not_moving_right:
     lda CURSORMOVEMENT
     and #%00000100
@@ -25,6 +39,13 @@ set_new_cursor_pos:
         ldx CURSORYPOS
         inx 
         stx CURSORYPOS
+        txa 
+        and #%00000111
+        cmp #%00000000
+        bne not_moving_down
+            ldx CURSORTILEYPOS
+            inx  
+            stx CURSORTILEYPOS
     not_moving_down:
     lda CURSORMOVEMENT
     and #%00001000
@@ -33,6 +54,13 @@ set_new_cursor_pos:
         ldx CURSORXPOS
         dex 
         stx CURSORXPOS
+        txa 
+        and #%00000111
+        cmp #%00000111
+        bne not_moving_left
+            ldx CURSORTILEXPOS
+            dex 
+            stx CURSORTILEXPOS
     not_moving_left:
 
     rts 

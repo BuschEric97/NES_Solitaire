@@ -4,7 +4,9 @@
 .segment "ZEROPAGE"
     CURSORMOVEMENT: .res 1  ; #%0000LDRU
     CURSORXPOS: .res 1
+    CURSORTILEXPOS: .res 1
     CURSORYPOS: .res 1
+    CURSORTILEYPOS: .res 1
     CURCARDID: .res 1   ; xSSVVVVV (x == unused, SS == suite, VVVVV == value)
 
 .segment "VARS"
@@ -82,6 +84,10 @@ game_loop:
         sta DRAWBGCARD
         lda #%01000000
         sta BGCARDID
+        lda CURSORTILEXPOS
+        sta BGCARDTILEX
+        lda CURSORTILEYPOS
+        sta BGCARDTILEY
         jsr draw_bg_card
     a_not_pressed:
 
@@ -91,6 +97,10 @@ game_loop:
     bne b_not_pressed
         lda #0
         sta DRAWBGCARD
+        lda CURSORTILEXPOS
+        sta BGCARDTILEX
+        lda CURSORTILEYPOS
+        sta BGCARDTILEY
         jsr draw_bg_card
     b_not_pressed:
 
