@@ -132,12 +132,18 @@ draw_bg_card:
         sta $2007
 
         ; draw middle of card
+        lda BGCARDLBYTE
+        clc 
+        adc #$20
+        sta BGCARDLBYTE
+        lda BGCARDHBYTE
+        adc #0
+        sta BGCARDHBYTE
+
         lda $2002
         lda BGCARDHBYTE
         sta $2006
         lda BGCARDLBYTE
-        clc 
-        adc #$20
         sta $2006
 
         lda #$80
@@ -156,12 +162,18 @@ draw_bg_card:
         sta $2007
 
         ; draw bottom of card
+        lda BGCARDLBYTE
+        clc 
+        adc #$20
+        sta BGCARDLBYTE
+        lda BGCARDHBYTE
+        adc #0
+        sta BGCARDHBYTE
+
         lda $2002
         lda BGCARDHBYTE
         sta $2006
         lda BGCARDLBYTE
-        clc 
-        adc #$40
         sta $2006
 
         lda #$90 
@@ -193,12 +205,18 @@ draw_bg_card:
         sta $2007
 
         ; erase middle of card
+        lda BGCARDLBYTE
+        clc 
+        adc #$20
+        sta BGCARDLBYTE
+        lda BGCARDHBYTE
+        adc #0
+        sta BGCARDHBYTE
+
         lda $2002
         lda BGCARDHBYTE
         sta $2006
         lda BGCARDLBYTE
-        clc 
-        adc #$20
         sta $2006
 
         lda #$3F
@@ -207,12 +225,18 @@ draw_bg_card:
         sta $2007
         
         ; erase bottom of card
+        lda BGCARDLBYTE
+        clc 
+        adc #$20
+        sta BGCARDLBYTE
+        lda BGCARDHBYTE
+        adc #0
+        sta BGCARDHBYTE
+
         lda $2002
         lda BGCARDHBYTE
         sta $2006
         lda BGCARDLBYTE
-        clc 
-        adc #$40
         sta $2006
 
         lda #$3F
