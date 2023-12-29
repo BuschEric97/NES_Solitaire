@@ -133,6 +133,14 @@ RESET:
     sta $2005
     sta $2005
 
+    ; initialize cursor position
+    lda #$80
+    sta CURSORXPOS
+    sta CURSORYPOS
+    lda #$10
+    sta CURSORTILEXPOS
+    sta CURSORTILEYPOS
+
     jmp game_loop   ; start the wait loop
 
 ;------------------------------------------------------ actual playable area of board: 28 x 20 byte grid (14 x 10 cards)
