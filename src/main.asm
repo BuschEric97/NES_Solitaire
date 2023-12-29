@@ -5,6 +5,7 @@
     CURSORMOVEMENT: .res 1  ; #%0000LDRU
     CURSORXPOS: .res 1
     CURSORYPOS: .res 1
+    CURCARDID: .res 1   ; xSSVVVVV (x == unused, SS == suite, VVVVV == value)
 
 .segment "VARS"
 
@@ -79,6 +80,8 @@ game_loop:
     bne a_not_pressed
         lda #1
         sta DRAWBGCARD
+        lda #%01000000
+        sta BGCARDID
         jsr draw_bg_card
     a_not_pressed:
 
