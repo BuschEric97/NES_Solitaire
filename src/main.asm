@@ -73,5 +73,23 @@ game_loop:
     jsr set_new_cursor_pos
     jsr draw_cursor
 
+    lda gamepad_press
+    and PRESS_A
+    cmp PRESS_A
+    bne a_not_pressed
+        lda #1
+        sta DRAWBGCARD
+        jsr draw_bg_card
+    a_not_pressed:
+
+    lda gamepad_press
+    and PRESS_B
+    cmp PRESS_B
+    bne b_not_pressed
+        lda #0
+        sta DRAWBGCARD
+        jsr draw_bg_card
+    b_not_pressed:
+
     ; return to start of game loop
     jmp game_loop
