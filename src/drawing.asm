@@ -110,26 +110,38 @@ draw_bg_card:
         sta $2006
 
         lda BGCARDID
-        and #%01000000
-        bne black_card
-        red_card:
+        and #%10000000
+        bne top_back
             lda BGCARDID
-            and #%00011111
-            clc 
-            adc #$30    ; card value
+            and #%01000000
+            bne black_card
+            red_card:
+                lda BGCARDID
+                and #%00011111
+                clc 
+                adc #$30    ; card value
+                sta $2007
+                jmp top_left_done
+            black_card:
+                lda BGCARDID
+                and #%00011111
+                clc 
+                adc #$40    ; card value
+                sta $2007
+            top_left_done:
+            lda #$71 
             sta $2007
-            jmp top_left_done
-        black_card:
-            lda BGCARDID
-            and #%00011111
-            clc 
-            adc #$40    ; card value
+            lda #$72
             sta $2007
-        top_left_done:
-        lda #$71 
-        sta $2007
-        lda #$72
-        sta $2007
+            jmp top_back_done
+        top_back:
+            lda #$73
+            sta $2007
+            lda #$74
+            sta $2007
+            lda #$75
+            sta $2007
+        top_back_done:
 
         ; draw middle of card
         lda BGCARDLBYTE
@@ -146,20 +158,32 @@ draw_bg_card:
         lda BGCARDLBYTE
         sta $2006
 
-        lda #$80
-        sta $2007
         lda BGCARDID
-        and #%01100000
-        lsr 
-        lsr 
-        lsr 
-        lsr 
-        clc 
-        adc #$50    ; suite top-left
-        sta $2007
-        clc 
-        adc #1    ; suite top-right
-        sta $2007
+        and #%10000000
+        bne middle_back
+            lda #$80
+            sta $2007
+            lda BGCARDID
+            and #%01100000
+            lsr 
+            lsr 
+            lsr 
+            lsr 
+            clc 
+            adc #$50    ; suite top-left
+            sta $2007
+            clc 
+            adc #1    ; suite top-right
+            sta $2007
+            jmp middle_back_done
+        middle_back:
+            lda #$83
+            sta $2007
+            lda #$84
+            sta $2007
+            lda #$85
+            sta $2007
+        middle_back_done:
 
         ; draw bottom of card
         lda BGCARDLBYTE
@@ -176,20 +200,32 @@ draw_bg_card:
         lda BGCARDLBYTE
         sta $2006
 
-        lda #$90 
-        sta $2007
         lda BGCARDID
-        and #%01100000
-        lsr 
-        lsr 
-        lsr 
-        lsr 
-        clc 
-        adc #$60    ; suite bottom-left
-        sta $2007
-        clc 
-        adc #1      ; suite bottom-right
-        sta $2007
+        and #%10000000
+        bne bottom_back
+            lda #$90 
+            sta $2007
+            lda BGCARDID
+            and #%01100000
+            lsr 
+            lsr 
+            lsr 
+            lsr 
+            clc 
+            adc #$60    ; suite bottom-left
+            sta $2007
+            clc 
+            adc #1      ; suite bottom-right
+            sta $2007
+            jmp bottom_back_done
+        bottom_back:
+            lda #$93
+            sta $2007
+            lda #$94
+            sta $2007
+            lda #$95
+            sta $2007
+        bottom_back_done:
         jmp done_drawing_bg_card
     erase_from_bg:
         ; erase top of card

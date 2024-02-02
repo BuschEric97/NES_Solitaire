@@ -7,7 +7,7 @@
     CURSORTILEXPOS: .res 1
     CURSORYPOS: .res 1
     CURSORTILEYPOS: .res 1
-    CURCARDID: .res 1   ; xSSVVVVV (x == unused, SS == suite, VVVVV == value)
+    CURCARDID: .res 1   ; HSSVVVVV (H == hidden flag (for drawing the back of the card), SS == suite, VVVVV == value)
 
 .segment "VARS"
 
