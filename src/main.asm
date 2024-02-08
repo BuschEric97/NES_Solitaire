@@ -8,6 +8,16 @@
     CURSORYPOS: .res 1
     CURSORTILEYPOS: .res 1
     CURCARDID: .res 1   ; HSSVVVVV (H == hidden flag (for drawing the back of the card), SS == suite, VVVVV == value)
+    DECK: .res 52
+    DRAWPILE: .res 3
+    BOARDCOL1: .res 20
+    BOARDCOL2: .res 20
+    BOARDCOL3: .res 20
+    BOARDCOL4: .res 20
+    BOARDCOL5: .res 20
+    BOARDCOL6: .res 20
+    BOARDCOL7: .res 20
+    DISCARDPILES: .res 4
 
 .segment "VARS"
 
