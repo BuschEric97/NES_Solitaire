@@ -78,3 +78,63 @@ set_new_cursor_pos:
     not_moving_left:
 
     rts 
+
+clear_board:
+    ldx #0
+    loop_thru_clear_deck:
+        lda #0
+        sta DECK, x
+        inx 
+        cpx #52
+        bne loop_thru_clear_deck
+    lda #0
+    sta DRAWPILE
+    sta DRAWPILE+1
+    sta DRAWPILE+2
+    sta DISCARDPILES
+    sta DISCARDPILES+1
+    sta DISCARDPILES+2
+    sta DISCARDPILES+3
+    loop_thru_clear_col_1:
+        lda #0
+        sta BOARDCOL1, x
+        inx 
+        cpx #20
+        bne loop_thru_clear_col_1
+    loop_thru_clear_col_2:
+        lda #0
+        sta BOARDCOL2, x
+        inx 
+        cpx #20
+        bne loop_thru_clear_col_2
+    loop_thru_clear_col_3:
+        lda #0
+        sta BOARDCOL3, x
+        inx 
+        cpx #20
+        bne loop_thru_clear_col_3
+    loop_thru_clear_col_4:
+        lda #0
+        sta BOARDCOL4, x
+        inx 
+        cpx #20
+        bne loop_thru_clear_col_4
+    loop_thru_clear_col_5:
+        lda #0
+        sta BOARDCOL5, x
+        inx 
+        cpx #20
+        bne loop_thru_clear_col_5
+    loop_thru_clear_col_6:
+        lda #0
+        sta BOARDCOL6, x
+        inx 
+        cpx #20
+        bne loop_thru_clear_col_6
+    loop_thru_clear_col_7:
+        lda #0
+        sta BOARDCOL7, x
+        inx 
+        cpx #20
+        bne loop_thru_clear_col_7
+    rts 
