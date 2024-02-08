@@ -140,9 +140,10 @@ game_loop:
         lda GAMEFLAG
         bne start_not_pressed   ; don't allow button START actions when game is being played
             jsr clear_board
+            jsr clear_background
             lda #1
             sta GAMEFLAG    ; set GAMEFLAG to 1 to indicate a game is being played
-            
+
             ; initialize cursor position
             lda #$80
             sta CURSORXPOS
