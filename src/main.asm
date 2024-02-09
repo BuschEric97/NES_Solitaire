@@ -110,7 +110,7 @@ game_loop:
     bne a_not_pressed
         lda #1
         sta DRAWBGCARD
-        lda #%01000000
+        lda #%01000001
         sta BGCARDID
         lda CURSORTILEXPOS
         sta BGCARDTILEX

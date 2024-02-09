@@ -96,6 +96,12 @@ draw_bg_card:
     lda BGCARDTILENUM
     sta BGCARDLBYTE
 
+    ; skip drawing the card if the card ID is #$00
+    lda BGCARDID
+    bne dont_skip_bg_card
+        jmp done_drawing_bg_card
+    dont_skip_bg_card:
+
     ; draw the card
     lda DRAWBGCARD
     cmp #1
