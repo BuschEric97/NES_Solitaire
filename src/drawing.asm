@@ -127,18 +127,38 @@ draw_bg_card:
                 clc 
                 adc #$30    ; card value
                 sta $2007
-                jmp top_left_done
+                lda #$30
+                sta $2007
+                lda BGCARDID
+                and #%00100000
+                lsr 
+                lsr 
+                lsr 
+                lsr 
+                lsr 
+                clc 
+                adc #$3E
+                sta $2007
+                jmp top_done
             black_card:
                 lda BGCARDID
                 and #%00011111
                 clc 
                 adc #$40    ; card value
                 sta $2007
-            top_left_done:
-            lda #$71 
-            sta $2007
-            lda #$72
-            sta $2007
+                lda #$40
+                sta $2007
+                lda BGCARDID
+                and #%00100000
+                lsr 
+                lsr 
+                lsr 
+                lsr 
+                lsr 
+                clc 
+                adc #$4E
+                sta $2007
+            top_done:
             jmp top_back_done
         top_back:
             lda #$73
@@ -241,7 +261,7 @@ draw_bg_card:
         lda BGCARDLBYTE
         sta $2006
 
-        lda #$3F
+        lda #$2F
         sta $2007
         sta $2007
         sta $2007
@@ -261,7 +281,7 @@ draw_bg_card:
         lda BGCARDLBYTE
         sta $2006
 
-        lda #$3F
+        lda #$2F
         sta $2007
         sta $2007
         sta $2007
@@ -281,7 +301,7 @@ draw_bg_card:
         lda BGCARDLBYTE
         sta $2006
 
-        lda #$3F
+        lda #$2F
         sta $2007
         sta $2007
         sta $2007
