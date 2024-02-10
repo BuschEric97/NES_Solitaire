@@ -297,18 +297,18 @@ deal_board:
         jsr prng 
         sec 
         deal_board_mod_0:
-            sbc #51
+            sbc #52
             bcs deal_board_mod_0
-        adc #51
+        adc #52
         sta DECKSWAPPOS0
 
         ; get random number modulus 52 and set to DECKSWAPPOS1
         jsr prng 
         sec 
         deal_board_mod_1:
-            sbc #51
+            sbc #52
             bcs deal_board_mod_1
-        adc #51
+        adc #52
         sta DECKSWAPPOS1
 
         jsr swap_2_deck_cards
