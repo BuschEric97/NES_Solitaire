@@ -10,7 +10,7 @@
     CURCARDID: .res 1       ; HSSVVVVV (H == hidden flag (for drawing the back of the card), SS == suite, VVVVV == value)
     GAMEFLAG: .res 1        ; Flag to indicate when a game is being played
     DECK: .res 52
-    TOPDECKINDEX: .res 1       ; indicates which card is on the top of the deck, equals #$FF if deck is empty
+    TOPDECKINDEX: .res 1       ; indicates which card is on the top of the deck, equals #$FF if deck is empty, "bottom" of deck is #$00
     DRAWPILE: .res 3
     DISCARDPILES: .res 4
     BOARDCOL1: .res 20
@@ -142,51 +142,7 @@ game_loop:
         bne start_not_pressed   ; don't allow button START actions when game is being played
             jsr clear_board
             jsr clear_background
-            
-            ;TODO: deal cards
-            lda #%11000001
-            sta DECK
-            lda #0
-            sta TOPDECKINDEX
-
-            lda #%01000001
-            sta DRAWPILE
-            sta DRAWPILE+1
-            sta DRAWPILE+2
-
-            lda #%01000001
-            sta DISCARDPILES
-            sta DISCARDPILES+1
-            sta DISCARDPILES+2
-            sta DISCARDPILES+3
-
-            lda #%01000001
-            sta BOARDCOL1
-            sta BOARDCOL1+1
-            sta BOARDCOL1+2
-            sta BOARDCOL1+3
-            sta BOARDCOL1+4
-            sta BOARDCOL1+5
-            sta BOARDCOL1+6
-            sta BOARDCOL1+7
-            lda #%01000011
-            sta BOARDCOL2
-            lda #%01000001
-            sta BOARDCOL2+1
-            sta BOARDCOL2+2
-            sta BOARDCOL2+3
-            sta BOARDCOL2+4
-            sta BOARDCOL3
-            sta BOARDCOL3+1
-            sta BOARDCOL4
-            sta BOARDCOL4+1
-            sta BOARDCOL5
-            sta BOARDCOL5+1
-            sta BOARDCOL6
-            sta BOARDCOL6+1
-            sta BOARDCOL7
-            sta BOARDCOL7+1
-
+            jsr deal_board
             jsr draw_board
 
             lda #1
