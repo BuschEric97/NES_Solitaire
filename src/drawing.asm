@@ -104,8 +104,7 @@ draw_bg_card:
 
     ; draw the card
     lda DRAWBGCARD
-    cmp #1
-    beq draw_on_bg
+    bne draw_on_bg
         jmp erase_from_bg
     draw_on_bg:
         ; draw top of card
@@ -315,6 +314,275 @@ draw_bg_card:
     lda #$00
     sta $2005
     sta $2005
+
+    rts 
+
+draw_board:
+    ; draw the deck
+    lda TOPDECKINDEX
+    cmp #$FF
+    bne draw_deck
+        ;erase_deck:
+        lda #0
+        sta DRAWBGCARD
+        lda #$01
+        sta BGCARDTILEX
+        lda #$02
+        sta BGCARDTILEY
+        jsr draw_bg_card
+    draw_deck:
+        lda #1
+        sta DRAWBGCARD
+        ldx TOPDECKINDEX
+        lda DECK, x         ; get top card of deck
+        sta BGCARDID
+        lda #$01
+        sta BGCARDTILEX
+        lda #$02
+        sta BGCARDTILEY
+        jsr draw_bg_card
+
+
+    ; draw the draw piles
+    ; draw pile 0
+    lda DRAWPILE
+    sta DRAWBGCARD          ; if draw pile card id is #$00, this will erase the draw pile card instead
+    sta BGCARDID
+    lda #$05
+    sta BGCARDTILEX
+    lda #$02
+    sta BGCARDTILEY
+    jsr draw_bg_card
+
+    ; draw pile 1
+    lda DRAWPILE+1
+    sta DRAWBGCARD
+    sta BGCARDID
+    lda #$08
+    sta BGCARDTILEX
+    lda #$02
+    sta BGCARDTILEY
+    jsr draw_bg_card
+
+    ; draw pile 2
+    lda DRAWPILE+2
+    sta DRAWBGCARD
+    sta BGCARDID
+    lda #$0B
+    sta BGCARDTILEX
+    lda #$02
+    sta BGCARDTILEY
+    jsr draw_bg_card
+
+    ; draw the discard piles
+    ; discard piles 0
+    lda DISCARDPILES
+    sta DRAWBGCARD          ; if discard pile card id is #$00, this will erase the discard pile card instead
+    sta BGCARDID
+    lda #$10
+    sta BGCARDTILEX
+    lda #$02
+    sta BGCARDTILEY
+    jsr draw_bg_card
+
+    ; discard piles 1
+    lda DISCARDPILES+1
+    sta DRAWBGCARD          ; if discard pile card id is #$00, this will erase the discard pile card instead
+    sta BGCARDID
+    lda #$14
+    sta BGCARDTILEX
+    lda #$02
+    sta BGCARDTILEY
+    jsr draw_bg_card
+
+    ; discard piles 2
+    lda DISCARDPILES+2
+    sta DRAWBGCARD          ; if discard pile card id is #$00, this will erase the discard pile card instead
+    sta BGCARDID
+    lda #$18
+    sta BGCARDTILEX
+    lda #$02
+    sta BGCARDTILEY
+    jsr draw_bg_card
+
+    ; discard piles 3
+    lda DISCARDPILES+3
+    sta DRAWBGCARD          ; if discard pile card id is #$00, this will erase the discard pile card instead
+    sta BGCARDID
+    lda #$1C
+    sta BGCARDTILEX
+    lda #$02
+    sta BGCARDTILEY
+    jsr draw_bg_card
+
+    ; draw each column
+    ; column 1
+    ldx #0
+    draw_col_1_loop:
+        lda BOARDCOL1, x
+        beq skip_draw_card_col_1
+            ;lda BOARDCOL1
+            sta DRAWBGCARD
+            sta BGCARDID
+            lda #$01
+            sta BGCARDTILEX
+            txa 
+            clc 
+            adc #$06
+            sta BGCARDTILEY
+            txa 
+            pha 
+            jsr draw_bg_card
+            pla 
+            tax 
+        skip_draw_card_col_1:
+        inx 
+        cpx #20
+        bne draw_col_1_loop
+
+    ; column 2
+    ldx #0
+    draw_col_2_loop:
+        lda BOARDCOL2, x
+        beq skip_draw_card_col_2
+            ;lda BOARDCOL2
+            sta DRAWBGCARD
+            sta BGCARDID
+            lda #$05
+            sta BGCARDTILEX
+            txa 
+            clc 
+            adc #$06
+            sta BGCARDTILEY
+            txa 
+            pha 
+            jsr draw_bg_card
+            pla 
+            tax 
+        skip_draw_card_col_2:
+        inx 
+        cpx #20
+        bne draw_col_2_loop
+
+    ; column 3
+    ldx #0
+    draw_col_3_loop:
+        lda BOARDCOL3, x
+        beq skip_draw_card_col_3
+            ;lda BOARDCOL3
+            sta DRAWBGCARD
+            sta BGCARDID
+            lda #$09
+            sta BGCARDTILEX
+            txa 
+            clc 
+            adc #$06
+            sta BGCARDTILEY
+            txa 
+            pha 
+            jsr draw_bg_card
+            pla 
+            tax 
+        skip_draw_card_col_3:
+        inx 
+        cpx #20
+        bne draw_col_3_loop
+
+    ; column 4
+    ldx #0
+    draw_col_4_loop:
+        lda BOARDCOL4, x
+        beq skip_draw_card_col_4
+            ;lda BOARDCOL4
+            sta DRAWBGCARD
+            sta BGCARDID
+            lda #$0D
+            sta BGCARDTILEX
+            txa 
+            clc 
+            adc #$06
+            sta BGCARDTILEY
+            txa 
+            pha 
+            jsr draw_bg_card
+            pla 
+            tax 
+        skip_draw_card_col_4:
+        inx 
+        cpx #20
+        bne draw_col_4_loop
+
+    ; column 5
+    ldx #0
+    draw_col_5_loop:
+        lda BOARDCOL5, x
+        beq skip_draw_card_col_5
+            ;lda BOARDCOL5
+            sta DRAWBGCARD
+            sta BGCARDID
+            lda #$11
+            sta BGCARDTILEX
+            txa 
+            clc 
+            adc #$06
+            sta BGCARDTILEY
+            txa 
+            pha 
+            jsr draw_bg_card
+            pla 
+            tax 
+        skip_draw_card_col_5:
+        inx 
+        cpx #20
+        bne draw_col_5_loop
+
+    ; column 6
+    ldx #0
+    draw_col_6_loop:
+        lda BOARDCOL6, x
+        beq skip_draw_card_col_6
+            ;lda BOARDCOL6
+            sta DRAWBGCARD
+            sta BGCARDID
+            lda #$15
+            sta BGCARDTILEX
+            txa 
+            clc 
+            adc #$06
+            sta BGCARDTILEY
+            txa 
+            pha 
+            jsr draw_bg_card
+            pla 
+            tax 
+        skip_draw_card_col_6:
+        inx 
+        cpx #20
+        bne draw_col_6_loop
+
+    ; column 7
+    ldx #0
+    draw_col_7_loop:
+        lda BOARDCOL7, x
+        beq skip_draw_card_col_7
+            ;lda BOARDCOL7
+            sta DRAWBGCARD
+            sta BGCARDID
+            lda #$19
+            sta BGCARDTILEX
+            txa 
+            clc 
+            adc #$06
+            sta BGCARDTILEY
+            txa 
+            pha 
+            jsr draw_bg_card
+            pla 
+            tax 
+        skip_draw_card_col_7:
+        inx 
+        cpx #20
+        bne draw_col_7_loop
 
     rts 
 
