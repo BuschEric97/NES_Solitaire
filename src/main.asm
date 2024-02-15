@@ -68,6 +68,10 @@ game_loop:
     adc #0
     sta seed
 
+    ;-----------------;
+    ; CURSOR HANDLING ;
+    ;-----------------;
+
     ; skip cursor code when game is not running
     lda GAMEFLAG
     bne do_cursor_logic
@@ -119,19 +123,33 @@ game_loop:
     jsr draw_cursor
     skip_cursor:
 
-    lda gamepad_press
+    ;-----------------;
+    ; BUTTON HANDLING ;
+    ;-----------------;
+
+    ; see if button A was pressed
+    lda gamepad_new_press
     and PRESS_A
     cmp PRESS_A
     bne a_not_pressed
         jsr get_click_pos
     a_not_pressed:
 
-    lda gamepad_press
+    ; see if button B was pressed
+    lda gamepad_new_press
     and PRESS_B
     cmp PRESS_B
     bne b_not_pressed
         nop 
     b_not_pressed:
+
+    ; see if button SELECT was pressed
+    lda gamepad_new_press
+    and PRESS_SELECT
+    cmp PRESS_SELECT
+    bne select_not_pressed
+        nop 
+    select_not_pressed:
 
     ; see if button START was pressed
     lda gamepad_new_press

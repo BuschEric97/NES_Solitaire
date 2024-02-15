@@ -133,6 +133,11 @@ RESET:
     sta $2005
     sta $2005
 
+    lda #0
+    sta GAMEFLAG    ; clear game flag because game is not being played
+
+    jsr erase_cursor
+
     jmp game_loop   ; start the wait loop
 
 ;------------------------------------------------------ actual playable area of board: 28 x 20 byte grid (14 x 10 cards)
