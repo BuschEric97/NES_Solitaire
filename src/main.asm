@@ -20,6 +20,20 @@
     BOARDCOL5: .res 20
     BOARDCOL6: .res 20
     BOARDCOL7: .res 20
+    ; Move Storage Schema:
+    ; a move position is a number from 0-144
+    ;   0 == deck
+    ;   1-3 == draw piles
+    ;   4 == discard piles (each discard pile has its suite set by default)
+    ;   5-24 == board column 1
+    ;   25-44 == board column 2
+    ;   45-64 == board column 3
+    ;   65-84 == board column 4
+    ;   85-104 == board column 5
+    ;   105-124 == board column 6
+    ;   125-144 == board column 7
+    CURMOVESTART: .res 1    ; current move starting board position
+    CURMOVEEND: .res 1      ; current move ending board position
 
 .segment "VARS"
 
@@ -109,28 +123,14 @@ game_loop:
     and PRESS_A
     cmp PRESS_A
     bne a_not_pressed
-        lda #1
-        sta DRAWBGCARD
-        lda #%01000001
-        sta BGCARDID
-        lda CURSORTILEXPOS
-        sta BGCARDTILEX
-        lda CURSORTILEYPOS
-        sta BGCARDTILEY
-        jsr draw_bg_card
+        jsr get_click_pos
     a_not_pressed:
 
     lda gamepad_press
     and PRESS_B
     cmp PRESS_B
     bne b_not_pressed
-        lda #0
-        sta DRAWBGCARD
-        lda CURSORTILEXPOS
-        sta BGCARDTILEX
-        lda CURSORTILEYPOS
-        sta BGCARDTILEY
-        jsr draw_bg_card
+        nop 
     b_not_pressed:
 
     ; see if button START was pressed

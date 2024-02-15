@@ -2,6 +2,7 @@
     DECKSWAPPOS0: .res 1
     DECKSWAPPOS1: .res 1
     DECKTEMPCARDID: .res 1
+    CURCLICKPOS: .res 1
 
 .segment "CODE"
 
@@ -562,4 +563,239 @@ deal_board:
     dex 
     stx TOPDECKINDEX
 
+    rts 
+
+get_click_pos:
+    ; set error value for click pos, if this doesn't change by done_get_click_pos then the current click pos is invalid
+    lda #$FF
+    sta CURCLICKPOS
+    
+    ; deck
+    lda CURSORTILEXPOS
+    cmp #$01
+    bmi not_click_deck
+        lda CURSORTILEXPOS
+        cmp #$04
+        bpl not_click_deck
+            lda CURSORTILEYPOS
+            cmp #$02
+            bmi not_click_deck
+                lda CURSORTILEYPOS
+                cmp #$05
+                bpl not_click_deck
+                    ; deck clicked
+                    lda #0
+                    sta CURCLICKPOS
+                    jmp done_get_click_pos
+    not_click_deck:
+
+    ; discard piles
+    lda CURSORTILEXPOS
+    cmp #$10
+    bmi not_click_discard
+        lda CURSORTILEXPOS
+        cmp #$1F
+        bpl not_click_discard
+            lda CURSORTILEYPOS
+            cmp #$02
+            bmi not_click_discard
+                lda CURSORTILEYPOS
+                cmp #$05
+                bpl not_click_discard
+                    ; discard piles clicked
+                    lda #4
+                    sta CURCLICKPOS
+                    jmp done_get_click_pos
+    not_click_discard:
+
+    ; draw piles
+    lda CURSORTILEXPOS
+    cmp #$05
+    bmi not_click_draw
+        lda CURSORTILEXPOS
+        cmp #$0E
+        bpl not_click_draw
+            lda CURSORTILEYPOS
+            cmp #$02
+            bmi not_click_draw
+                lda CURSORTILEYPOS
+                cmp #$05
+                bpl not_click_draw
+                    ; draw piles clicked
+                    ; determine which draw pile was clicked and store that value in X
+                    ;   we do this using a modified version of modulo
+                    ldx #0
+                    lda CURSORTILEXPOS
+                    sec 
+                    sbc #$05
+                    sec 
+                    draw_piles_mod:
+                        inx 
+                        sbc #$03
+                        bcs draw_piles_mod
+                    stx CURCLICKPOS     ; store the draw pile value
+                    jmp done_get_click_pos
+    not_click_draw:
+
+    ; board columns
+    ; board column 1
+    lda CURSORTILEXPOS
+    cmp #$01
+    bmi not_click_col_1
+        lda CURSORTILEXPOS
+        cmp #$04
+        bpl not_click_col_1
+            lda CURSORTILEYPOS
+            cmp #$06
+            bmi not_click_col_1
+                lda CURSORTILEYPOS
+                cmp #$1A
+                bpl not_click_col_1
+                    ; column 1 clicked
+                    lda CURSORTILEYPOS
+                    sec 
+                    sbc #1
+                    sta CURCLICKPOS
+                    jmp done_get_click_pos
+    not_click_col_1:
+
+    ; board column 2
+    lda CURSORTILEXPOS
+    cmp #$05
+    bmi not_click_col_2
+        lda CURSORTILEXPOS
+        cmp #$08
+        bpl not_click_col_2
+            lda CURSORTILEYPOS
+            cmp #$06
+            bmi not_click_col_2
+                lda CURSORTILEYPOS
+                cmp #$1A
+                bpl not_click_col_2
+                    ; column 1 clicked
+                    lda CURSORTILEYPOS
+                    sec 
+                    sbc #1
+                    clc 
+                    adc #20
+                    sta CURCLICKPOS
+                    jmp done_get_click_pos
+    not_click_col_2:
+
+    ; board column 3
+    lda CURSORTILEXPOS
+    cmp #$09
+    bmi not_click_col_3
+        lda CURSORTILEXPOS
+        cmp #$0C
+        bpl not_click_col_3
+            lda CURSORTILEYPOS
+            cmp #$06
+            bmi not_click_col_3
+                lda CURSORTILEYPOS
+                cmp #$1A
+                bpl not_click_col_3
+                    ; column 1 clicked
+                    lda CURSORTILEYPOS
+                    sec 
+                    sbc #1
+                    clc 
+                    adc #40
+                    sta CURCLICKPOS
+                    jmp done_get_click_pos
+    not_click_col_3:
+
+    ; board column 4
+    lda CURSORTILEXPOS
+    cmp #$0D
+    bmi not_click_col_4
+        lda CURSORTILEXPOS
+        cmp #$10
+        bpl not_click_col_4
+            lda CURSORTILEYPOS
+            cmp #$06
+            bmi not_click_col_4
+                lda CURSORTILEYPOS
+                cmp #$1A
+                bpl not_click_col_4
+                    ; column 1 clicked
+                    lda CURSORTILEYPOS
+                    sec 
+                    sbc #1
+                    clc 
+                    adc #60
+                    sta CURCLICKPOS
+                    jmp done_get_click_pos
+    not_click_col_4:
+
+    ; board column 5
+    lda CURSORTILEXPOS
+    cmp #$11
+    bmi not_click_col_5
+        lda CURSORTILEXPOS
+        cmp #$14
+        bpl not_click_col_5
+            lda CURSORTILEYPOS
+            cmp #$06
+            bmi not_click_col_5
+                lda CURSORTILEYPOS
+                cmp #$1A
+                bpl not_click_col_5
+                    ; column 1 clicked
+                    lda CURSORTILEYPOS
+                    sec 
+                    sbc #1
+                    clc 
+                    adc #80
+                    sta CURCLICKPOS
+                    jmp done_get_click_pos
+    not_click_col_5:
+
+    ; board column 6
+    lda CURSORTILEXPOS
+    cmp #$15
+    bmi not_click_col_6
+        lda CURSORTILEXPOS
+        cmp #$18
+        bpl not_click_col_6
+            lda CURSORTILEYPOS
+            cmp #$06
+            bmi not_click_col_6
+                lda CURSORTILEYPOS
+                cmp #$1A
+                bpl not_click_col_6
+                    ; column 1 clicked
+                    lda CURSORTILEYPOS
+                    sec 
+                    sbc #1
+                    clc 
+                    adc #100
+                    sta CURCLICKPOS
+                    jmp done_get_click_pos
+    not_click_col_6:
+
+    ; board column 7
+    lda CURSORTILEXPOS
+    cmp #$19
+    bmi not_click_col_7
+        lda CURSORTILEXPOS
+        cmp #$1C
+        bpl not_click_col_7
+            lda CURSORTILEYPOS
+            cmp #$06
+            bmi not_click_col_7
+                lda CURSORTILEYPOS
+                cmp #$1A
+                bpl not_click_col_7
+                    ; column 1 clicked
+                    lda CURSORTILEYPOS
+                    sec 
+                    sbc #1
+                    clc 
+                    adc #120
+                    sta CURCLICKPOS
+                    jmp done_get_click_pos
+    not_click_col_7:
+
+    done_get_click_pos:
     rts 
