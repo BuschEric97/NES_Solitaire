@@ -146,6 +146,8 @@ game_loop:
 
                 lda #1
                 sta CURMOVEIND
+                
+                jmp a_not_pressed
             a_move_deck_clicked:
                 lda #0
                 sta CURMOVESTART
