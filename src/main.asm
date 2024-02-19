@@ -32,6 +32,7 @@
     ;   85-104 == board column 5
     ;   105-124 == board column 6
     ;   125-144 == board column 7
+    CURMOVEIND: .res 1      ; determines where to store click pos on A press: 0 == CURMOVESTART, 1 == CURMOVEEND
     CURMOVESTART: .res 1    ; current move starting board position
     CURMOVEEND: .res 1      ; current move ending board position
 
@@ -133,6 +134,33 @@ game_loop:
     cmp PRESS_A
     bne a_not_pressed
         jsr get_click_pos
+
+        lda CURMOVEIND
+        bne a_move_second_press
+            ;a_move_first_press:
+            lda CURCLICKPOS
+            beq a_move_deck_clicked
+                ;a_move_deck_not_clicked:
+                lda CURCLICKPOS
+                sta CURMOVESTART
+
+                lda #1
+                sta CURMOVEIND
+            a_move_deck_clicked:
+                lda #0
+                sta CURMOVESTART
+                sta CURMOVEEND
+                jsr make_move
+
+            jmp a_not_pressed
+        a_move_second_press:
+            lda CURCLICKPOS
+            sta CURMOVEEND
+
+            lda #0
+            sta CURMOVEIND
+
+            jsr make_move
     a_not_pressed:
 
     ; see if button B was pressed
