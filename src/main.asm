@@ -12,6 +12,7 @@
     DECK: .res 52
     TOPDECKINDEX: .res 1       ; indicates which card is on the top of the deck, equals #$FF if deck is empty, "bottom" of deck is #$00
     DRAWPILE: .res 3
+    DRAWPILEINDEX: .res 1      ; indicates which card from the deck is currently the top card of the draw pile, equals #$FF if draw pile is empty
     DISCARDPILES: .res 4
     BOARDCOL1: .res 20
     BOARDCOL2: .res 20
@@ -133,36 +134,38 @@ game_loop:
     and PRESS_A
     cmp PRESS_A
     bne a_not_pressed
-        jsr get_click_pos
+        lda GAMEFLAG
+        beq a_not_pressed
+            jsr get_click_pos
 
-        lda CURMOVEIND
-        bne a_move_second_press
-            ;a_move_first_press:
-            lda CURCLICKPOS
-            beq a_move_deck_clicked
-                ;a_move_deck_not_clicked:
+            lda CURMOVEIND
+            bne a_move_second_press
+                ;a_move_first_press:
                 lda CURCLICKPOS
-                sta CURMOVESTART
+                beq a_move_deck_clicked
+                    ;a_move_deck_not_clicked:
+                    lda CURCLICKPOS
+                    sta CURMOVESTART
 
-                lda #1
-                sta CURMOVEIND
-                
+                    lda #1
+                    sta CURMOVEIND
+
+                    jmp a_not_pressed
+                a_move_deck_clicked:
+                    lda #0
+                    sta CURMOVESTART
+                    sta CURMOVEEND
+                    jsr make_move
+
                 jmp a_not_pressed
-            a_move_deck_clicked:
-                lda #0
-                sta CURMOVESTART
+            a_move_second_press:
+                lda CURCLICKPOS
                 sta CURMOVEEND
+
+                lda #0
+                sta CURMOVEIND
+
                 jsr make_move
-
-            jmp a_not_pressed
-        a_move_second_press:
-            lda CURCLICKPOS
-            sta CURMOVEEND
-
-            lda #0
-            sta CURMOVEIND
-
-            jsr make_move
     a_not_pressed:
 
     ; see if button B was pressed
@@ -178,7 +181,12 @@ game_loop:
     and PRESS_SELECT
     cmp PRESS_SELECT
     bne select_not_pressed
-        nop 
+        lda GAMEFLAG
+        beq select_not_pressed
+            lda #0
+            sta CURMOVESTART
+            sta CURMOVEEND
+            jsr make_move
     select_not_pressed:
 
     ; see if button START was pressed

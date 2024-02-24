@@ -6,6 +6,7 @@
     BGCARDTILENUM: .res 2
     BGCARDHBYTE: .res 1
     BGCARDLBYTE: .res 1
+    MOVETEMPCARDID: .res 1
 
 .segment "CODE"
 
@@ -315,6 +316,889 @@ draw_bg_card:
     sta $2005
     sta $2005
 
+    rts 
+
+; This subroutine handles drawing the current move as well as moving the relevant cards around!
+make_move:
+    ; handle card in start position
+    ; move from deck
+    lda CURMOVESTART
+    bne move_not_from_deck
+        ;move_from_deck:
+        lda TOPDECKINDEX
+        cmp #$FF
+        bne move_deck_not_empty
+            ;move_deck_empty:
+            ; update draw pile index
+            lda #$FF
+            sta DRAWPILEINDEX
+
+            ; set top card index back to top card of deck
+            lda #51
+            sta TOPDECKINDEX
+            top_deck_index_loop:
+                ldx TOPDECKINDEX
+                dex 
+                stx TOPDECKINDEX
+
+                lda DECK, x 
+                beq top_deck_index_loop
+            
+            ; redraw the deck
+            lda #1
+            sta DRAWBGCARD
+            ldx TOPDECKINDEX
+            lda DECK, x 
+            sta BGCARDID
+            lda #$01
+            sta BGCARDTILEX
+            lda #$02
+            sta BGCARDTILEY
+            jsr draw_bg_card
+
+            ; erase the draw pile
+            lda #0
+            sta DRAWBGCARD
+            lda #$05
+            sta BGCARDTILEX
+            lda #$02
+            sta BGCARDTILEY
+            jsr draw_bg_card
+
+            jmp done_making_move
+        move_deck_not_empty:
+            ; update draw pile index
+            lda TOPDECKINDEX
+            sta DRAWPILEINDEX
+
+            ; store top card of deck into temp slot
+            ldx TOPDECKINDEX
+            lda DECK, x 
+            sec 
+            sbc #%10000000  ; make sure not to show back of card now
+            sta MOVETEMPCARDID
+
+            lda TOPDECKINDEX
+            bne move_deck_not_last_card
+                lda #0
+                sta DRAWBGCARD
+                lda #$01
+                sta BGCARDTILEX
+                lda #$02
+                sta BGCARDTILEY
+                jsr draw_bg_card
+                
+                ; update TOPDECKINDEX with empty deck index
+                lda #$FF
+                sta TOPDECKINDEX
+
+                jmp handle_end_card
+            move_deck_not_last_card:
+                ; update TOPDECKINDEX with new top of deck
+                next_top_deck_index_loop:
+                    ldx TOPDECKINDEX
+                    dex 
+                    stx TOPDECKINDEX
+
+                    lda DECK, x 
+                    beq next_top_deck_index_loop
+
+                jmp handle_end_card
+    move_not_from_deck:
+
+    ; move from draw pile
+    lda CURMOVESTART
+    cmp #1
+    bne move_not_from_draw_pile
+        ;move_from_draw_pile:
+        ; skip taking from draw pile if draw pile is empty
+        lda DRAWPILEINDEX
+        cmp #$FF
+        beq move_not_from_draw_pile
+            ; store draw pile card into temp slot
+            ldx DRAWPILEINDEX
+            lda DECK, x 
+            sec 
+            sbc #%10000000  ; make sure not to show back of card now
+            sta MOVETEMPCARDID
+
+            ; erase draw pile card from deck
+            ldx DRAWPILEINDEX
+            lda #0
+            sta DECK, x 
+
+            ; move draw pile index back 1 card
+            next_draw_pile_index_loop:
+                ldx DRAWPILEINDEX
+                inx 
+                stx DRAWPILEINDEX
+                
+                ; skip drawing a next card if there are no more cards in the draw pile now
+                lda DRAWPILEINDEX
+                cmp #51
+                beq move_not_from_draw_pile
+
+                ldx DRAWPILEINDEX
+                lda DECK, x 
+                beq move_erase_draw_pile
+
+            ; draw the new draw pile card from index
+            lda #1
+            sta DRAWBGCARD
+            ldx DRAWPILEINDEX
+            lda DECK, x 
+            sec 
+            sbc #%10000000  ; make sure not to show back of card now
+            sta BGCARDID
+            lda #$05
+            sta BGCARDTILEX
+            lda #$02
+            sta BGCARDTILEY
+            jsr draw_bg_card
+
+            ; don't erase draw pile after just drawing to draw pile
+            jmp handle_end_card
+            move_erase_draw_pile:
+                lda #0
+                sta DRAWBGCARD
+                lda #$05
+                sta BGCARDTILEX
+                lda #$02
+                sta BGCARDTILEY
+                jsr draw_bg_card
+
+                jmp handle_end_card
+    move_not_from_draw_pile:
+
+    ; move from columns
+    ; move from column 1
+    lda CURMOVESTART
+    cmp #5
+    bmi move_not_from_column1
+        lda CURMOVESTART
+        cmp #25
+        bpl move_not_from_column1
+            ;move_from_column1:
+            ; store column card into temp slot
+            lda CURMOVESTART
+            sec 
+            sbc #5
+            tax 
+            lda BOARDCOL1, x 
+            sta MOVETEMPCARDID
+
+            ; remove column card from column
+            lda #0
+            sta BOARDCOL1, x 
+
+            ; erase column card from column
+            lda #0
+            sta DRAWBGCARD
+            lda #$01
+            sta BGCARDTILEX
+            txa 
+            clc 
+            adc #$06
+            sta BGCARDTILEY
+            txa 
+            pha 
+            jsr draw_bg_card
+            pla 
+            tax 
+
+            ; get the card below column card if any
+            dex 
+            cpx #$FF
+            bne cont_move_from_column1
+                jmp handle_end_card     ; skip rest of move from logic if no card is below column card
+            cont_move_from_column1:
+
+            ; flip the card below if it is hidden
+            lda BOARDCOL1, x 
+            cmp #%10000000
+            bmi column1_below_card_already_shown
+                sec 
+                sbc #%10000000
+                sta BOARDCOL1, x 
+            column1_below_card_already_shown:
+
+            ; redraw the card below if there is one
+            lda #1
+            sta DRAWBGCARD
+            lda BOARDCOL1, x 
+            sta BGCARDID
+            lda #$01
+            sta BGCARDTILEX
+            txa 
+            clc 
+            adc #$06
+            sta BGCARDTILEY
+            jsr draw_bg_card
+
+            jmp handle_end_card
+    move_not_from_column1:
+
+    ; move from column 2
+    lda CURMOVESTART
+    cmp #25
+    bmi move_not_from_column2
+        lda CURMOVESTART
+        cmp #45
+        bpl move_not_from_column2
+            ;move_from_column2:
+            ; store column card into temp slot
+            lda CURMOVESTART
+            sec 
+            sbc #25
+            tax 
+            lda BOARDCOL2, x 
+            sta MOVETEMPCARDID
+
+            ; remove column card from column
+            lda #0
+            sta BOARDCOL2, x 
+
+            ; erase column card from column
+            lda #0
+            sta DRAWBGCARD
+            lda #$05
+            sta BGCARDTILEX
+            txa 
+            clc 
+            adc #$06
+            sta BGCARDTILEY
+            txa 
+            pha 
+            jsr draw_bg_card
+            pla 
+            tax 
+
+            ; get the card below column card if any
+            dex 
+            cpx #$FF
+            bne cont_move_from_column2
+                jmp handle_end_card     ; skip rest of move from logic if no card is below column card
+            cont_move_from_column2:
+
+            ; flip the card below if it is hidden
+            lda BOARDCOL2, x 
+            cmp #%10000000
+            bmi column2_below_card_already_shown
+                sec 
+                sbc #%10000000
+                sta BOARDCOL2, x 
+            column2_below_card_already_shown:
+
+            ; redraw the card below if there is one
+            lda #1
+            sta DRAWBGCARD
+            lda BOARDCOL2, x 
+            sta BGCARDID
+            lda #$05
+            sta BGCARDTILEX
+            txa 
+            clc 
+            adc #$06
+            sta BGCARDTILEY
+            jsr draw_bg_card
+
+            jmp handle_end_card
+    move_not_from_column2:
+
+    ; move from column 3
+    lda CURMOVESTART
+    cmp #45
+    bmi move_not_from_column3
+        lda CURMOVESTART
+        cmp #65
+        bpl move_not_from_column3
+            ;move_from_column3:
+            ; store column card into temp slot
+            lda CURMOVESTART
+            sec 
+            sbc #45
+            tax 
+            lda BOARDCOL3, x 
+            sta MOVETEMPCARDID
+
+            ; remove column card from column
+            lda #0
+            sta BOARDCOL3, x 
+
+            ; erase column card from column
+            lda #0
+            sta DRAWBGCARD
+            lda #$09
+            sta BGCARDTILEX
+            txa 
+            clc 
+            adc #$06
+            sta BGCARDTILEY
+            txa 
+            pha 
+            jsr draw_bg_card
+            pla 
+            tax 
+
+            ; get the card below column card if any
+            dex 
+            cpx #$FF
+            bne cont_move_from_column3
+                jmp handle_end_card     ; skip rest of move from logic if no card is below column card
+            cont_move_from_column3:
+
+            ; flip the card below if it is hidden
+            lda BOARDCOL3, x 
+            cmp #%10000000
+            bmi column3_below_card_already_shown
+                sec 
+                sbc #%10000000
+                sta BOARDCOL3, x 
+            column3_below_card_already_shown:
+
+            ; redraw the card below if there is one
+            lda #1
+            sta DRAWBGCARD
+            lda BOARDCOL3, x 
+            sta BGCARDID
+            lda #$09
+            sta BGCARDTILEX
+            txa 
+            clc 
+            adc #$06
+            sta BGCARDTILEY
+            jsr draw_bg_card
+
+            jmp handle_end_card
+    move_not_from_column3:
+
+    ; move from column 4
+    lda CURMOVESTART
+    cmp #65
+    bmi move_not_from_column4
+        lda CURMOVESTART
+        cmp #85
+        bpl move_not_from_column4
+            ;move_from_column4:
+            ; store column card into temp slot
+            lda CURMOVESTART
+            sec 
+            sbc #65
+            tax 
+            lda BOARDCOL4, x 
+            sta MOVETEMPCARDID
+
+            ; remove column card from column
+            lda #0
+            sta BOARDCOL4, x 
+
+            ; erase column card from column
+            lda #0
+            sta DRAWBGCARD
+            lda #$0D
+            sta BGCARDTILEX
+            txa 
+            clc 
+            adc #$06
+            sta BGCARDTILEY
+            txa 
+            pha 
+            jsr draw_bg_card
+            pla 
+            tax 
+
+            ; get the card below column card if any
+            dex 
+            cpx #$FF
+            bne cont_move_from_column4
+                jmp handle_end_card     ; skip rest of move from logic if no card is below column card
+            cont_move_from_column4:
+
+            ; flip the card below if it is hidden
+            lda BOARDCOL4, x 
+            cmp #%10000000
+            bmi column4_below_card_already_shown
+                sec 
+                sbc #%10000000
+                sta BOARDCOL4, x 
+            column4_below_card_already_shown:
+
+            ; redraw the card below if there is one
+            lda #1
+            sta DRAWBGCARD
+            lda BOARDCOL4, x 
+            sta BGCARDID
+            lda #$0D
+            sta BGCARDTILEX
+            txa 
+            clc 
+            adc #$06
+            sta BGCARDTILEY
+            jsr draw_bg_card
+
+            jmp handle_end_card
+    move_not_from_column4:
+
+    ; move from column 5
+    lda CURMOVESTART
+    cmp #85
+    bmi move_not_from_column5
+        lda CURMOVESTART
+        cmp #105
+        bpl move_not_from_column5
+            ;move_from_column5:
+            ; store column card into temp slot
+            lda CURMOVESTART
+            sec 
+            sbc #85
+            tax 
+            lda BOARDCOL5, x 
+            sta MOVETEMPCARDID
+
+            ; remove column card from column
+            lda #0
+            sta BOARDCOL5, x 
+
+            ; erase column card from column
+            lda #0
+            sta DRAWBGCARD
+            lda #$11
+            sta BGCARDTILEX
+            txa 
+            clc 
+            adc #$06
+            sta BGCARDTILEY
+            txa 
+            pha 
+            jsr draw_bg_card
+            pla 
+            tax 
+
+            ; get the card below column card if any
+            dex 
+            cpx #$FF
+            bne cont_move_from_column5
+                jmp handle_end_card     ; skip rest of move from logic if no card is below column card
+            cont_move_from_column5:
+
+            ; flip the card below if it is hidden
+            lda BOARDCOL5, x 
+            cmp #%10000000
+            bmi column5_below_card_already_shown
+                sec 
+                sbc #%10000000
+                sta BOARDCOL5, x 
+            column5_below_card_already_shown:
+
+            ; redraw the card below if there is one
+            lda #1
+            sta DRAWBGCARD
+            lda BOARDCOL5, x 
+            sta BGCARDID
+            lda #$11
+            sta BGCARDTILEX
+            txa 
+            clc 
+            adc #$06
+            sta BGCARDTILEY
+            jsr draw_bg_card
+
+            jmp handle_end_card
+    move_not_from_column5:
+
+    ; move from column 6
+    lda CURMOVESTART
+    cmp #105
+    bmi move_not_from_column6
+        lda CURMOVESTART
+        cmp #125
+        bpl move_not_from_column6
+            ;move_from_column6:
+            ; store column card into temp slot
+            lda CURMOVESTART
+            sec 
+            sbc #105
+            tax 
+            lda BOARDCOL6, x 
+            sta MOVETEMPCARDID
+
+            ; remove column card from column
+            lda #0
+            sta BOARDCOL6, x 
+
+            ; erase column card from column
+            lda #0
+            sta DRAWBGCARD
+            lda #$15
+            sta BGCARDTILEX
+            txa 
+            clc 
+            adc #$06
+            sta BGCARDTILEY
+            txa 
+            pha 
+            jsr draw_bg_card
+            pla 
+            tax 
+
+            ; get the card below column card if any
+            dex 
+            cpx #$FF
+            bne cont_move_from_column6
+                jmp handle_end_card     ; skip rest of move from logic if no card is below column card
+            cont_move_from_column6:
+
+            ; flip the card below if it is hidden
+            lda BOARDCOL6, x 
+            cmp #%10000000
+            bmi column6_below_card_already_shown
+                sec 
+                sbc #%10000000
+                sta BOARDCOL6, x 
+            column6_below_card_already_shown:
+
+            ; redraw the card below if there is one
+            lda #1
+            sta DRAWBGCARD
+            lda BOARDCOL6, x 
+            sta BGCARDID
+            lda #$15
+            sta BGCARDTILEX
+            txa 
+            clc 
+            adc #$06
+            sta BGCARDTILEY
+            jsr draw_bg_card
+
+            jmp handle_end_card
+    move_not_from_column6:
+
+    ; move from column 7
+    lda CURMOVESTART
+    cmp #125
+    bmi move_not_from_column7
+        ;move_from_column7:
+        ; store column card into temp slot
+        lda CURMOVESTART
+        sec 
+        sbc #125
+        tax 
+        lda BOARDCOL7, x 
+        sta MOVETEMPCARDID
+
+        ; remove column card from column
+        lda #0
+        sta BOARDCOL7, x 
+
+        ; erase column card from column
+        lda #0
+        sta DRAWBGCARD
+        lda #$19
+        sta BGCARDTILEX
+        txa 
+        clc 
+        adc #$06
+        sta BGCARDTILEY
+        txa 
+        pha 
+        jsr draw_bg_card
+        pla 
+        tax 
+
+        ; get the card below column card if any
+        dex 
+        cpx #$FF
+        bne cont_move_from_column7
+            jmp handle_end_card     ; skip rest of move from logic if no card is below column card
+        cont_move_from_column7:
+
+        ; flip the card below if it is hidden
+        lda BOARDCOL7, x 
+        cmp #%10000000
+        bmi column7_below_card_already_shown
+            sec 
+            sbc #%10000000
+            sta BOARDCOL7, x 
+        column7_below_card_already_shown:
+
+        ; redraw the card below if there is one
+        lda #1
+        sta DRAWBGCARD
+        lda BOARDCOL7, x 
+        sta BGCARDID
+        lda #$19
+        sta BGCARDTILEX
+        txa 
+        clc 
+        adc #$06
+        sta BGCARDTILEY
+        jsr draw_bg_card
+
+        jmp handle_end_card
+    move_not_from_column7:
+
+    ; handle card in end position
+    handle_end_card:
+    
+    ; move to draw pile
+    lda CURMOVESTART
+    bne move_not_to_draw_pile
+        ;move_to_draw_pile:
+        lda #1
+        sta DRAWBGCARD
+        lda MOVETEMPCARDID
+        sta BGCARDID
+        lda #$05
+        sta BGCARDTILEX
+        lda #$02
+        sta BGCARDTILEY
+        jsr draw_bg_card
+
+        jmp done_making_move
+    move_not_to_draw_pile:
+
+    ; move to discard piles
+    lda CURMOVEEND
+    cmp #4
+    bne move_not_to_discard_piles
+        ;move_to_discard_piles:
+        lda #1
+        sta DRAWBGCARD
+        lda MOVETEMPCARDID
+        sta BGCARDID
+
+        lda MOVETEMPCARDID
+        and #%01100000
+        lsr 
+        lsr 
+        lsr 
+        clc 
+        adc #$10
+        sta BGCARDTILEX
+
+        lda #$02
+        sta BGCARDTILEY
+        jsr draw_bg_card
+
+        jmp done_making_move
+    move_not_to_discard_piles:
+
+    ;TODO: move to columns
+    ; move to column 1
+    lda CURMOVEEND
+    cmp #5
+    bmi move_not_to_column1
+        lda CURMOVEEND
+        cmp #25
+        bpl move_not_to_column1
+            ;move_to_column1:
+            ; store card from temp slot in column
+            lda CURMOVEEND
+            sec 
+            sbc #5
+            tax 
+            lda MOVETEMPCARDID
+            sta BOARDCOL1, x 
+
+            ; draw card in column
+            sta BGCARDID
+            lda #1
+            sta DRAWBGCARD
+            lda #$01
+            sta BGCARDTILEX
+            txa 
+            clc 
+            adc #$06
+            sta BGCARDTILEY
+            jsr draw_bg_card
+
+            jmp done_making_move
+    move_not_to_column1:
+
+    ; move to column 2
+    lda CURMOVEEND
+    cmp #25
+    bmi move_not_to_column2
+        lda CURMOVEEND
+        cmp #45
+        bpl move_not_to_column2
+            ;move_to_column2:
+            ; store card from temp slot in column
+            lda CURMOVEEND
+            sec 
+            sbc #25
+            tax 
+            lda MOVETEMPCARDID
+            sta BOARDCOL2, x 
+
+            ; draw card in column
+            sta BGCARDID
+            lda #1
+            sta DRAWBGCARD
+            lda #$05
+            sta BGCARDTILEX
+            txa 
+            clc 
+            adc #$06
+            sta BGCARDTILEY
+            jsr draw_bg_card
+
+            jmp done_making_move
+    move_not_to_column2:
+
+    ; move to column 3
+    lda CURMOVEEND
+    cmp #45
+    bmi move_not_to_column3
+        lda CURMOVEEND
+        cmp #65
+        bpl move_not_to_column3
+            ;move_to_column3:
+            ; store card from temp slot in column
+            lda CURMOVEEND
+            sec 
+            sbc #45
+            tax 
+            lda MOVETEMPCARDID
+            sta BOARDCOL3, x 
+
+            ; draw card in column
+            sta BGCARDID
+            lda #1
+            sta DRAWBGCARD
+            lda #$09
+            sta BGCARDTILEX
+            txa 
+            clc 
+            adc #$06
+            sta BGCARDTILEY
+            jsr draw_bg_card
+
+            jmp done_making_move
+    move_not_to_column3:
+
+    ; move to column 4
+    lda CURMOVEEND
+    cmp #65
+    bmi move_not_to_column4
+        lda CURMOVEEND
+        cmp #85
+        bpl move_not_to_column4
+            ;move_to_column4:
+            ; store card from temp slot in column
+            lda CURMOVEEND
+            sec 
+            sbc #65
+            tax 
+            lda MOVETEMPCARDID
+            sta BOARDCOL4, x 
+
+            ; draw card in column
+            sta BGCARDID
+            lda #1
+            sta DRAWBGCARD
+            lda #$0D
+            sta BGCARDTILEX
+            txa 
+            clc 
+            adc #$06
+            sta BGCARDTILEY
+            jsr draw_bg_card
+
+            jmp done_making_move
+    move_not_to_column4:
+
+    ; move to column 5
+    lda CURMOVEEND
+    cmp #85
+    bmi move_not_to_column5
+        lda CURMOVEEND
+        cmp #105
+        bpl move_not_to_column5
+            ;move_to_column5:
+            ; store card from temp slot in column
+            lda CURMOVEEND
+            sec 
+            sbc #85
+            tax 
+            lda MOVETEMPCARDID
+            sta BOARDCOL5, x 
+
+            ; draw card in column
+            sta BGCARDID
+            lda #1
+            sta DRAWBGCARD
+            lda #$11
+            sta BGCARDTILEX
+            txa 
+            clc 
+            adc #$06
+            sta BGCARDTILEY
+            jsr draw_bg_card
+
+            jmp done_making_move
+    move_not_to_column5:
+
+    ; move to column 6
+    lda CURMOVEEND
+    cmp #105
+    bmi move_not_to_column6
+        lda CURMOVEEND
+        cmp #125
+        bpl move_not_to_column6
+            ;move_to_column6:
+            ; store card from temp slot in column
+            lda CURMOVEEND
+            sec 
+            sbc #105
+            tax 
+            lda MOVETEMPCARDID
+            sta BOARDCOL6, x 
+
+            ; draw card in column
+            sta BGCARDID
+            lda #1
+            sta DRAWBGCARD
+            lda #$15
+            sta BGCARDTILEX
+            txa 
+            clc 
+            adc #$06
+            sta BGCARDTILEY
+            jsr draw_bg_card
+
+            jmp done_making_move
+    move_not_to_column6:
+
+    ; move to column 7
+    lda CURMOVEEND
+    cmp #125
+    bmi move_not_to_column7
+        ;move_to_column7:
+        ; store card from temp slot in column
+        lda CURMOVEEND
+        sec 
+        sbc #125
+        tax 
+        lda MOVETEMPCARDID
+        sta BOARDCOL6, x 
+
+        ; draw card in column
+        sta BGCARDID
+        lda #1
+        sta DRAWBGCARD
+        lda #$19
+        sta BGCARDTILEX
+        txa 
+        clc 
+        adc #$06
+        sta BGCARDTILEY
+        jsr draw_bg_card
+
+        jmp done_making_move
+    move_not_to_column7:
+
+    done_making_move:
     rts 
 
 draw_board:

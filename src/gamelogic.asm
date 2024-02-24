@@ -563,6 +563,10 @@ deal_board:
     dex 
     stx TOPDECKINDEX
 
+    ; set draw pile index
+    lda #$FF
+    sta DRAWPILEINDEX
+
     rts 
 
 get_click_pos:
