@@ -1181,7 +1181,7 @@ make_move:
         sbc #125
         tax 
         lda MOVETEMPCARDID
-        sta BOARDCOL6, x 
+        sta BOARDCOL7, x 
 
         ; draw card in column
         sta BGCARDID

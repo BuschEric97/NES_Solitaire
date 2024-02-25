@@ -803,3 +803,247 @@ get_click_pos:
 
     done_get_click_pos:
     rts 
+
+adjust_click_pos:
+    ; skip processing if click position is not on a column
+    lda CURCLICKPOS
+    cmp #5
+    bpl click_on_column
+        cmp #145
+        bmi click_on_column
+            jmp done_adjusting_click_pos
+    click_on_column:
+
+    lda CURCLICKPOS
+    cmp #25
+    bpl click_not_column1
+        ;click_column1:
+        ;lda CURCLICKPOS
+        sec 
+        sbc #5
+        beq click_not_column1   ; skip adjusting if we clicked the top of the column
+        tax 
+
+        ; increase X by 1 if we are currently clicking the start position
+        lda CURMOVEIND
+        bne adjust_column1_move_check
+            inx 
+        adjust_column1_move_check:
+
+        lda BOARDCOL1, x 
+        bne click_not_column1   ; skip adjusting if where we clicked is not empty
+        jmp adjust_column1_loop_cond
+        adjust_column1_loop:
+            lda CURCLICKPOS
+            sec 
+            sbc #1
+            sta CURCLICKPOS
+            dex 
+            adjust_column1_loop_cond:
+            cpx #0
+            beq click_not_column1   ; break out of loop if we reached top of column
+            lda BOARDCOL1-1, x 
+            beq adjust_column1_loop
+        jmp done_adjusting_click_pos
+    click_not_column1:
+
+    lda CURCLICKPOS
+    cmp #45
+    bpl click_not_column2
+        ;click_column2:
+        ;lda CURCLICKPOS
+        sec 
+        sbc #25
+        beq click_not_column2   ; skip adjusting if we clicked the top of the column
+        tax 
+
+        ; increase X by 1 if we are currently clicking the start position
+        lda CURMOVEIND
+        bne adjust_column2_move_check
+            inx 
+        adjust_column2_move_check:
+
+        lda BOARDCOL2, x 
+        bne click_not_column2   ; skip adjusting if where we clicked is not empty
+        jmp adjust_column2_loop_cond
+        adjust_column2_loop:
+            lda CURCLICKPOS
+            sec 
+            sbc #1
+            sta CURCLICKPOS
+            dex 
+            adjust_column2_loop_cond:
+            cpx #0
+            beq click_not_column2   ; break out of loop if we reached top of column
+            lda BOARDCOL2-1, x 
+            beq adjust_column2_loop
+        jmp done_adjusting_click_pos
+    click_not_column2:
+
+    lda CURCLICKPOS
+    cmp #65
+    bpl click_not_column3
+        ;click_column3:
+        ;lda CURCLICKPOS
+        sec 
+        sbc #45
+        beq click_not_column3   ; skip adjusting if we clicked the top of the column
+        tax 
+
+        ; increase X by 1 if we are currently clicking the start position
+        lda CURMOVEIND
+        bne adjust_column3_move_check
+            inx 
+        adjust_column3_move_check:
+
+        lda BOARDCOL3, x 
+        bne click_not_column3   ; skip adjusting if where we clicked is not empty
+        jmp adjust_column3_loop_cond
+        adjust_column3_loop:
+            lda CURCLICKPOS
+            sec 
+            sbc #1
+            sta CURCLICKPOS
+            dex 
+            adjust_column3_loop_cond:
+            cpx #0
+            beq click_not_column3   ; break out of loop if we reached top of column
+            lda BOARDCOL3-1, x 
+            beq adjust_column3_loop
+        jmp done_adjusting_click_pos
+    click_not_column3:
+
+    lda CURCLICKPOS
+    cmp #85
+    bpl click_not_column4
+        ;click_column4:
+        ;lda CURCLICKPOS
+        sec 
+        sbc #65
+        beq click_not_column4   ; skip adjusting if we clicked the top of the column
+        tax 
+
+        ; increase X by 1 if we are currently clicking the start position
+        lda CURMOVEIND
+        bne adjust_column4_move_check
+            inx 
+        adjust_column4_move_check:
+
+        lda BOARDCOL4, x 
+        bne click_not_column4   ; skip adjusting if where we clicked is not empty
+        jmp adjust_column4_loop_cond
+        adjust_column4_loop:
+            lda CURCLICKPOS
+            sec 
+            sbc #1
+            sta CURCLICKPOS
+            dex 
+            adjust_column4_loop_cond:
+            cpx #0
+            beq click_not_column4   ; break out of loop if we reached top of column
+            lda BOARDCOL4-1, x 
+            beq adjust_column4_loop
+        jmp done_adjusting_click_pos
+    click_not_column4:
+
+    lda CURCLICKPOS
+    cmp #105
+    bpl click_not_column5
+        ;click_column5:
+        ;lda CURCLICKPOS
+        sec 
+        sbc #85
+        beq click_not_column5   ; skip adjusting if we clicked the top of the column
+        tax 
+
+        ; increase X by 1 if we are currently clicking the start position
+        lda CURMOVEIND
+        bne adjust_column5_move_check
+            inx 
+        adjust_column5_move_check:
+
+        lda BOARDCOL5, x 
+        bne click_not_column5   ; skip adjusting if where we clicked is not empty
+        jmp adjust_column5_loop_cond
+        adjust_column5_loop:
+            lda CURCLICKPOS
+            sec 
+            sbc #1
+            sta CURCLICKPOS
+            dex 
+            adjust_column5_loop_cond:
+            cpx #0
+            beq click_not_column5   ; break out of loop if we reached top of column
+            lda BOARDCOL5-1, x 
+            beq adjust_column5_loop
+        jmp done_adjusting_click_pos
+    click_not_column5:
+
+    lda CURCLICKPOS
+    cmp #125
+    bpl click_not_column6
+        ;click_column6:
+        ;lda CURCLICKPOS
+        sec 
+        sbc #105
+        beq click_not_column6   ; skip adjusting if we clicked the top of the column
+        tax 
+
+        ; increase X by 1 if we are currently clicking the start position
+        lda CURMOVEIND
+        bne adjust_column6_move_check
+            inx 
+        adjust_column6_move_check:
+
+        lda BOARDCOL6, x 
+        bne click_not_column6   ; skip adjusting if where we clicked is not empty
+        jmp adjust_column6_loop_cond
+        adjust_column6_loop:
+            lda CURCLICKPOS
+            sec 
+            sbc #1
+            sta CURCLICKPOS
+            dex 
+            adjust_column6_loop_cond:
+            cpx #0
+            beq click_not_column6   ; break out of loop if we reached top of column
+            lda BOARDCOL6-1, x 
+            beq adjust_column6_loop
+        jmp done_adjusting_click_pos
+    click_not_column6:
+
+    lda CURCLICKPOS
+    cmp #145
+    bpl click_not_column7
+        ;click_column7:
+        ;lda CURCLICKPOS
+        sec 
+        sbc #125
+        beq click_not_column7   ; skip adjusting if we clicked the top of the column
+        tax 
+
+        ; increase X by 1 if we are currently clicking the start position
+        lda CURMOVEIND
+        bne adjust_column7_move_check
+            inx 
+        adjust_column7_move_check:
+
+        lda BOARDCOL7, x 
+        bne click_not_column7   ; skip adjusting if where we clicked is not empty
+        jmp adjust_column7_loop_cond
+        adjust_column7_loop:
+            lda CURCLICKPOS
+            sec 
+            sbc #1
+            sta CURCLICKPOS
+            dex 
+            adjust_column7_loop_cond:
+            cpx #0
+            beq click_not_column7   ; break out of loop if we reached top of column
+            lda BOARDCOL7-1, x 
+            beq adjust_column7_loop
+        jmp done_adjusting_click_pos
+    click_not_column7:
+
+    done_adjusting_click_pos:
+    rts 

@@ -137,6 +137,7 @@ game_loop:
         lda GAMEFLAG
         beq a_not_pressed
             jsr get_click_pos
+            jsr adjust_click_pos
 
             lda CURMOVEIND
             bne a_move_second_press
