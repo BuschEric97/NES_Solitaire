@@ -6,7 +6,7 @@
     BGCARDTILENUM: .res 2
     BGCARDHBYTE: .res 1
     BGCARDLBYTE: .res 1
-    MOVETEMPCARDID: .res 1
+    MOVETEMPCARDID: .res 13
 
 .segment "CODE"
 
@@ -479,31 +479,56 @@ make_move:
         cmp #25
         bpl move_not_from_column1
             ;move_from_column1:
-            ; store column card into temp slot
+            ; get position of column card
             lda CURMOVESTART
             sec 
             sbc #5
             tax 
-            lda BOARDCOL1, x 
-            sta MOVETEMPCARDID
 
-            ; remove column card from column
-            lda #0
-            sta BOARDCOL1, x 
+            ldy #0
+            move_stack_from_column1_loop:
+                ; store column card into temp slot
+                lda BOARDCOL1, x 
+                sta MOVETEMPCARDID, y
 
-            ; erase column card from column
-            lda #0
-            sta DRAWBGCARD
-            lda #$01
-            sta BGCARDTILEX
-            txa 
-            clc 
-            adc #$06
-            sta BGCARDTILEY
-            txa 
-            pha 
-            jsr draw_bg_card
-            pla 
+                ; remove column card from column
+                lda #0
+                sta BOARDCOL1, x 
+
+                ; erase column card from column
+                lda #0
+                sta DRAWBGCARD
+                lda #$01
+                sta BGCARDTILEX
+                txa 
+                clc 
+                adc #$06
+                sta BGCARDTILEY
+                txa 
+                pha 
+                tya 
+                pha 
+                jsr draw_bg_card
+                pla 
+                tay 
+                pla 
+                tax 
+
+                ; increment indices and break out of loop if next card slot is empty OR Y == 13
+                inx 
+                iny 
+                cpy #13
+                beq move_stack_from_column1_loop_break
+                lda BOARDCOL1, x 
+                beq move_stack_from_column1_loop_break
+                ; otherwise continue looping
+                jmp move_stack_from_column1_loop
+            move_stack_from_column1_loop_break:
+
+            ; get position of column card
+            lda CURMOVESTART
+            sec 
+            sbc #5
             tax 
 
             ; get the card below column card if any
@@ -546,31 +571,56 @@ make_move:
         cmp #45
         bpl move_not_from_column2
             ;move_from_column2:
-            ; store column card into temp slot
+            ; get position of column card
             lda CURMOVESTART
             sec 
             sbc #25
             tax 
-            lda BOARDCOL2, x 
-            sta MOVETEMPCARDID
 
-            ; remove column card from column
-            lda #0
-            sta BOARDCOL2, x 
+            ldy #0
+            move_stack_from_column2_loop:
+                ; store column card into temp slot
+                lda BOARDCOL2, x 
+                sta MOVETEMPCARDID, y
 
-            ; erase column card from column
-            lda #0
-            sta DRAWBGCARD
-            lda #$05
-            sta BGCARDTILEX
-            txa 
-            clc 
-            adc #$06
-            sta BGCARDTILEY
-            txa 
-            pha 
-            jsr draw_bg_card
-            pla 
+                ; remove column card from column
+                lda #0
+                sta BOARDCOL2, x 
+
+                ; erase column card from column
+                lda #0
+                sta DRAWBGCARD
+                lda #$05
+                sta BGCARDTILEX
+                txa 
+                clc 
+                adc #$06
+                sta BGCARDTILEY
+                txa 
+                pha 
+                tya 
+                pha 
+                jsr draw_bg_card
+                pla 
+                tay 
+                pla 
+                tax 
+
+                ; increment indices and break out of loop if next card slot is empty OR Y == 13
+                inx 
+                iny 
+                cpy #13
+                beq move_stack_from_column2_loop_break
+                lda BOARDCOL2, x 
+                beq move_stack_from_column2_loop_break
+                ; otherwise continue looping
+                jmp move_stack_from_column2_loop
+            move_stack_from_column2_loop_break:
+
+            ; get position of column card
+            lda CURMOVESTART
+            sec 
+            sbc #25
             tax 
 
             ; get the card below column card if any
@@ -613,31 +663,56 @@ make_move:
         cmp #65
         bpl move_not_from_column3
             ;move_from_column3:
-            ; store column card into temp slot
+            ; get position of column card
             lda CURMOVESTART
             sec 
             sbc #45
             tax 
-            lda BOARDCOL3, x 
-            sta MOVETEMPCARDID
 
-            ; remove column card from column
-            lda #0
-            sta BOARDCOL3, x 
+            ldy #0
+            move_stack_from_column3_loop:
+                ; store column card into temp slot
+                lda BOARDCOL3, x 
+                sta MOVETEMPCARDID, y
 
-            ; erase column card from column
-            lda #0
-            sta DRAWBGCARD
-            lda #$09
-            sta BGCARDTILEX
-            txa 
-            clc 
-            adc #$06
-            sta BGCARDTILEY
-            txa 
-            pha 
-            jsr draw_bg_card
-            pla 
+                ; remove column card from column
+                lda #0
+                sta BOARDCOL3, x 
+
+                ; erase column card from column
+                lda #0
+                sta DRAWBGCARD
+                lda #$09
+                sta BGCARDTILEX
+                txa 
+                clc 
+                adc #$06
+                sta BGCARDTILEY
+                txa 
+                pha 
+                tya 
+                pha 
+                jsr draw_bg_card
+                pla 
+                tay 
+                pla 
+                tax 
+
+                ; increment indices and break out of loop if next card slot is empty OR Y == 13
+                inx 
+                iny 
+                cpy #13
+                beq move_stack_from_column3_loop_break
+                lda BOARDCOL3, x 
+                beq move_stack_from_column3_loop_break
+                ; otherwise continue looping
+                jmp move_stack_from_column3_loop
+            move_stack_from_column3_loop_break:
+
+            ; get position of column card
+            lda CURMOVESTART
+            sec 
+            sbc #45
             tax 
 
             ; get the card below column card if any
@@ -680,31 +755,56 @@ make_move:
         cmp #85
         bpl move_not_from_column4
             ;move_from_column4:
-            ; store column card into temp slot
+            ; get position of column card
             lda CURMOVESTART
             sec 
             sbc #65
             tax 
-            lda BOARDCOL4, x 
-            sta MOVETEMPCARDID
 
-            ; remove column card from column
-            lda #0
-            sta BOARDCOL4, x 
+            ldy #0
+            move_stack_from_column4_loop:
+                ; store column card into temp slot
+                lda BOARDCOL4, x 
+                sta MOVETEMPCARDID, y
 
-            ; erase column card from column
-            lda #0
-            sta DRAWBGCARD
-            lda #$0D
-            sta BGCARDTILEX
-            txa 
-            clc 
-            adc #$06
-            sta BGCARDTILEY
-            txa 
-            pha 
-            jsr draw_bg_card
-            pla 
+                ; remove column card from column
+                lda #0
+                sta BOARDCOL4, x 
+
+                ; erase column card from column
+                lda #0
+                sta DRAWBGCARD
+                lda #$0D
+                sta BGCARDTILEX
+                txa 
+                clc 
+                adc #$06
+                sta BGCARDTILEY
+                txa 
+                pha 
+                tya 
+                pha 
+                jsr draw_bg_card
+                pla 
+                tay 
+                pla 
+                tax 
+
+                ; increment indices and break out of loop if next card slot is empty OR Y == 13
+                inx 
+                iny 
+                cpy #13
+                beq move_stack_from_column4_loop_break
+                lda BOARDCOL4, x 
+                beq move_stack_from_column4_loop_break
+                ; otherwise continue looping
+                jmp move_stack_from_column4_loop
+            move_stack_from_column4_loop_break:
+
+            ; get position of column card
+            lda CURMOVESTART
+            sec 
+            sbc #65
             tax 
 
             ; get the card below column card if any
@@ -747,31 +847,56 @@ make_move:
         cmp #105
         bpl move_not_from_column5
             ;move_from_column5:
-            ; store column card into temp slot
+            ; get position of column card
             lda CURMOVESTART
             sec 
             sbc #85
             tax 
-            lda BOARDCOL5, x 
-            sta MOVETEMPCARDID
 
-            ; remove column card from column
-            lda #0
-            sta BOARDCOL5, x 
+            ldy #0
+            move_stack_from_column5_loop:
+                ; store column card into temp slot
+                lda BOARDCOL5, x 
+                sta MOVETEMPCARDID, y
 
-            ; erase column card from column
-            lda #0
-            sta DRAWBGCARD
-            lda #$11
-            sta BGCARDTILEX
-            txa 
-            clc 
-            adc #$06
-            sta BGCARDTILEY
-            txa 
-            pha 
-            jsr draw_bg_card
-            pla 
+                ; remove column card from column
+                lda #0
+                sta BOARDCOL5, x 
+
+                ; erase column card from column
+                lda #0
+                sta DRAWBGCARD
+                lda #$11
+                sta BGCARDTILEX
+                txa 
+                clc 
+                adc #$06
+                sta BGCARDTILEY
+                txa 
+                pha 
+                tya 
+                pha 
+                jsr draw_bg_card
+                pla 
+                tay 
+                pla 
+                tax 
+
+                ; increment indices and break out of loop if next card slot is empty OR Y == 13
+                inx 
+                iny 
+                cpy #13
+                beq move_stack_from_column5_loop_break
+                lda BOARDCOL5, x 
+                beq move_stack_from_column5_loop_break
+                ; otherwise continue looping
+                jmp move_stack_from_column5_loop
+            move_stack_from_column5_loop_break:
+
+            ; get position of column card
+            lda CURMOVESTART
+            sec 
+            sbc #85
             tax 
 
             ; get the card below column card if any
@@ -814,31 +939,56 @@ make_move:
         cmp #125
         bpl move_not_from_column6
             ;move_from_column6:
-            ; store column card into temp slot
+            ; get position of column card
             lda CURMOVESTART
             sec 
             sbc #105
             tax 
-            lda BOARDCOL6, x 
-            sta MOVETEMPCARDID
 
-            ; remove column card from column
-            lda #0
-            sta BOARDCOL6, x 
+            ldy #0
+            move_stack_from_column6_loop:
+                ; store column card into temp slot
+                lda BOARDCOL6, x 
+                sta MOVETEMPCARDID, y
 
-            ; erase column card from column
-            lda #0
-            sta DRAWBGCARD
-            lda #$15
-            sta BGCARDTILEX
-            txa 
-            clc 
-            adc #$06
-            sta BGCARDTILEY
-            txa 
-            pha 
-            jsr draw_bg_card
-            pla 
+                ; remove column card from column
+                lda #0
+                sta BOARDCOL6, x 
+
+                ; erase column card from column
+                lda #0
+                sta DRAWBGCARD
+                lda #$15
+                sta BGCARDTILEX
+                txa 
+                clc 
+                adc #$06
+                sta BGCARDTILEY
+                txa 
+                pha 
+                tya 
+                pha 
+                jsr draw_bg_card
+                pla 
+                tay 
+                pla 
+                tax 
+
+                ; increment indices and break out of loop if next card slot is empty OR Y == 13
+                inx 
+                iny 
+                cpy #13
+                beq move_stack_from_column6_loop_break
+                lda BOARDCOL6, x 
+                beq move_stack_from_column6_loop_break
+                ; otherwise continue looping
+                jmp move_stack_from_column6_loop
+            move_stack_from_column6_loop_break:
+
+            ; get position of column card
+            lda CURMOVESTART
+            sec 
+            sbc #105
             tax 
 
             ; get the card below column card if any
@@ -878,31 +1028,56 @@ make_move:
     cmp #125
     bmi move_not_from_column7
         ;move_from_column7:
-        ; store column card into temp slot
+        ; get position of column card
         lda CURMOVESTART
         sec 
         sbc #125
         tax 
-        lda BOARDCOL7, x 
-        sta MOVETEMPCARDID
 
-        ; remove column card from column
-        lda #0
-        sta BOARDCOL7, x 
+        ldy #0
+        move_stack_from_column7_loop:
+            ; store column card into temp slot
+            lda BOARDCOL7, x 
+            sta MOVETEMPCARDID, y
 
-        ; erase column card from column
-        lda #0
-        sta DRAWBGCARD
-        lda #$19
-        sta BGCARDTILEX
-        txa 
-        clc 
-        adc #$06
-        sta BGCARDTILEY
-        txa 
-        pha 
-        jsr draw_bg_card
-        pla 
+            ; remove column card from column
+            lda #0
+            sta BOARDCOL7, x 
+
+            ; erase column card from column
+            lda #0
+            sta DRAWBGCARD
+            lda #$19
+            sta BGCARDTILEX
+            txa 
+            clc 
+            adc #$06
+            sta BGCARDTILEY
+            txa 
+            pha 
+            tya 
+            pha 
+            jsr draw_bg_card
+            pla 
+            tay 
+            pla 
+            tax 
+
+            ; increment indices and break out of loop if next card slot is empty OR Y == 13
+            inx 
+            iny 
+            cpy #13
+            beq move_stack_from_column7_loop_break
+            lda BOARDCOL7, x 
+            beq move_stack_from_column7_loop_break
+            ; otherwise continue looping
+            jmp move_stack_from_column7_loop
+        move_stack_from_column7_loop_break:
+
+        ; get position of column card
+        lda CURMOVESTART
+        sec 
+        sbc #125
         tax 
 
         ; get the card below column card if any
@@ -992,25 +1167,49 @@ make_move:
         cmp #25
         bpl move_not_to_column1
             ;move_to_column1:
-            ; store card from temp slot in column
             lda CURMOVEEND
             sec 
             sbc #5
             tax 
-            lda MOVETEMPCARDID
-            sta BOARDCOL1, x 
 
-            ; draw card in column
-            sta BGCARDID
-            lda #1
-            sta DRAWBGCARD
-            lda #$01
-            sta BGCARDTILEX
-            txa 
-            clc 
-            adc #$06
-            sta BGCARDTILEY
-            jsr draw_bg_card
+            ldy #0
+            move_stack_to_column1_loop:
+                ; store card from temp slot in column
+                lda MOVETEMPCARDID, y
+                sta BOARDCOL1, x 
+
+                ; draw card in column
+                sta BGCARDID
+                lda #1
+                sta DRAWBGCARD
+                lda #$01
+                sta BGCARDTILEX
+                txa 
+                clc 
+                adc #$06
+                sta BGCARDTILEY
+                txa 
+                pha 
+                tya 
+                pha 
+                jsr draw_bg_card
+                pla 
+                tay 
+                pla 
+                tax 
+
+                ; increment indices and break out of loop if next temp card is empty OR X == 20
+                inx 
+                iny 
+                cpy #13
+                beq move_stack_to_column1_loop_break
+                lda MOVETEMPCARDID, y
+                beq move_stack_to_column1_loop_break
+                cpx #20
+                beq move_stack_to_column1_loop_break
+                ; otherwise continue looping
+                jmp move_stack_to_column1_loop
+            move_stack_to_column1_loop_break:
 
             jmp done_making_move
     move_not_to_column1:
@@ -1023,25 +1222,49 @@ make_move:
         cmp #45
         bpl move_not_to_column2
             ;move_to_column2:
-            ; store card from temp slot in column
             lda CURMOVEEND
             sec 
             sbc #25
             tax 
-            lda MOVETEMPCARDID
-            sta BOARDCOL2, x 
 
-            ; draw card in column
-            sta BGCARDID
-            lda #1
-            sta DRAWBGCARD
-            lda #$05
-            sta BGCARDTILEX
-            txa 
-            clc 
-            adc #$06
-            sta BGCARDTILEY
-            jsr draw_bg_card
+            ldy #0
+            move_stack_to_column2_loop:
+                ; store card from temp slot in column
+                lda MOVETEMPCARDID, y
+                sta BOARDCOL2, x 
+
+                ; draw card in column
+                sta BGCARDID
+                lda #1
+                sta DRAWBGCARD
+                lda #$05
+                sta BGCARDTILEX
+                txa 
+                clc 
+                adc #$06
+                sta BGCARDTILEY
+                txa 
+                pha 
+                tya 
+                pha 
+                jsr draw_bg_card
+                pla 
+                tay 
+                pla 
+                tax 
+
+                ; increment indices and break out of loop if next temp card is empty OR X == 20
+                inx 
+                iny 
+                cpy #13
+                beq move_stack_to_column2_loop_break
+                lda MOVETEMPCARDID, y
+                beq move_stack_to_column2_loop_break
+                cpx #20
+                beq move_stack_to_column2_loop_break
+                ; otherwise continue looping
+                jmp move_stack_to_column2_loop
+            move_stack_to_column2_loop_break:
 
             jmp done_making_move
     move_not_to_column2:
@@ -1054,25 +1277,49 @@ make_move:
         cmp #65
         bpl move_not_to_column3
             ;move_to_column3:
-            ; store card from temp slot in column
             lda CURMOVEEND
             sec 
             sbc #45
             tax 
-            lda MOVETEMPCARDID
-            sta BOARDCOL3, x 
 
-            ; draw card in column
-            sta BGCARDID
-            lda #1
-            sta DRAWBGCARD
-            lda #$09
-            sta BGCARDTILEX
-            txa 
-            clc 
-            adc #$06
-            sta BGCARDTILEY
-            jsr draw_bg_card
+            ldy #0
+            move_stack_to_column3_loop:
+                ; store card from temp slot in column
+                lda MOVETEMPCARDID, y
+                sta BOARDCOL3, x 
+
+                ; draw card in column
+                sta BGCARDID
+                lda #1
+                sta DRAWBGCARD
+                lda #$09
+                sta BGCARDTILEX
+                txa 
+                clc 
+                adc #$06
+                sta BGCARDTILEY
+                txa 
+                pha 
+                tya 
+                pha 
+                jsr draw_bg_card
+                pla 
+                tay 
+                pla 
+                tax 
+
+                ; increment indices and break out of loop if next temp card is empty OR X == 20
+                inx 
+                iny 
+                cpy #13
+                beq move_stack_to_column3_loop_break
+                lda MOVETEMPCARDID, y
+                beq move_stack_to_column3_loop_break
+                cpx #20
+                beq move_stack_to_column3_loop_break
+                ; otherwise continue looping
+                jmp move_stack_to_column3_loop
+            move_stack_to_column3_loop_break:
 
             jmp done_making_move
     move_not_to_column3:
@@ -1085,25 +1332,49 @@ make_move:
         cmp #85
         bpl move_not_to_column4
             ;move_to_column4:
-            ; store card from temp slot in column
             lda CURMOVEEND
             sec 
             sbc #65
             tax 
-            lda MOVETEMPCARDID
-            sta BOARDCOL4, x 
 
-            ; draw card in column
-            sta BGCARDID
-            lda #1
-            sta DRAWBGCARD
-            lda #$0D
-            sta BGCARDTILEX
-            txa 
-            clc 
-            adc #$06
-            sta BGCARDTILEY
-            jsr draw_bg_card
+            ldy #0
+            move_stack_to_column4_loop:
+                ; store card from temp slot in column
+                lda MOVETEMPCARDID, y
+                sta BOARDCOL4, x 
+
+                ; draw card in column
+                sta BGCARDID
+                lda #1
+                sta DRAWBGCARD
+                lda #$0D
+                sta BGCARDTILEX
+                txa 
+                clc 
+                adc #$06
+                sta BGCARDTILEY
+                txa 
+                pha 
+                tya 
+                pha 
+                jsr draw_bg_card
+                pla 
+                tay 
+                pla 
+                tax 
+
+                ; increment indices and break out of loop if next temp card is empty OR X == 20
+                inx 
+                iny 
+                cpy #13
+                beq move_stack_to_column4_loop_break
+                lda MOVETEMPCARDID, y
+                beq move_stack_to_column4_loop_break
+                cpx #20
+                beq move_stack_to_column4_loop_break
+                ; otherwise continue looping
+                jmp move_stack_to_column4_loop
+            move_stack_to_column4_loop_break:
 
             jmp done_making_move
     move_not_to_column4:
@@ -1116,25 +1387,49 @@ make_move:
         cmp #105
         bpl move_not_to_column5
             ;move_to_column5:
-            ; store card from temp slot in column
             lda CURMOVEEND
             sec 
             sbc #85
             tax 
-            lda MOVETEMPCARDID
-            sta BOARDCOL5, x 
 
-            ; draw card in column
-            sta BGCARDID
-            lda #1
-            sta DRAWBGCARD
-            lda #$11
-            sta BGCARDTILEX
-            txa 
-            clc 
-            adc #$06
-            sta BGCARDTILEY
-            jsr draw_bg_card
+            ldy #0
+            move_stack_to_column5_loop:
+                ; store card from temp slot in column
+                lda MOVETEMPCARDID, y
+                sta BOARDCOL5, x 
+
+                ; draw card in column
+                sta BGCARDID
+                lda #1
+                sta DRAWBGCARD
+                lda #$11
+                sta BGCARDTILEX
+                txa 
+                clc 
+                adc #$06
+                sta BGCARDTILEY
+                txa 
+                pha 
+                tya 
+                pha 
+                jsr draw_bg_card
+                pla 
+                tay 
+                pla 
+                tax 
+
+                ; increment indices and break out of loop if next temp card is empty OR X == 20
+                inx 
+                iny 
+                cpy #13
+                beq move_stack_to_column5_loop_break
+                lda MOVETEMPCARDID, y
+                beq move_stack_to_column5_loop_break
+                cpx #20
+                beq move_stack_to_column5_loop_break
+                ; otherwise continue looping
+                jmp move_stack_to_column5_loop
+            move_stack_to_column5_loop_break:
 
             jmp done_making_move
     move_not_to_column5:
@@ -1147,25 +1442,49 @@ make_move:
         cmp #125
         bpl move_not_to_column6
             ;move_to_column6:
-            ; store card from temp slot in column
             lda CURMOVEEND
             sec 
             sbc #105
             tax 
-            lda MOVETEMPCARDID
-            sta BOARDCOL6, x 
 
-            ; draw card in column
-            sta BGCARDID
-            lda #1
-            sta DRAWBGCARD
-            lda #$15
-            sta BGCARDTILEX
-            txa 
-            clc 
-            adc #$06
-            sta BGCARDTILEY
-            jsr draw_bg_card
+            ldy #0
+            move_stack_to_column6_loop:
+                ; store card from temp slot in column
+                lda MOVETEMPCARDID, y
+                sta BOARDCOL6, x 
+
+                ; draw card in column
+                sta BGCARDID
+                lda #1
+                sta DRAWBGCARD
+                lda #$15
+                sta BGCARDTILEX
+                txa 
+                clc 
+                adc #$06
+                sta BGCARDTILEY
+                txa 
+                pha 
+                tya 
+                pha 
+                jsr draw_bg_card
+                pla 
+                tay 
+                pla 
+                tax 
+
+                ; increment indices and break out of loop if next temp card is empty OR X == 20
+                inx 
+                iny 
+                cpy #13
+                beq move_stack_to_column6_loop_break
+                lda MOVETEMPCARDID, y
+                beq move_stack_to_column6_loop_break
+                cpx #20
+                beq move_stack_to_column6_loop_break
+                ; otherwise continue looping
+                jmp move_stack_to_column6_loop
+            move_stack_to_column6_loop_break:
 
             jmp done_making_move
     move_not_to_column6:
@@ -1175,30 +1494,71 @@ make_move:
     cmp #125
     bmi move_not_to_column7
         ;move_to_column7:
-        ; store card from temp slot in column
         lda CURMOVEEND
         sec 
         sbc #125
         tax 
-        lda MOVETEMPCARDID
-        sta BOARDCOL7, x 
 
-        ; draw card in column
-        sta BGCARDID
-        lda #1
-        sta DRAWBGCARD
-        lda #$19
-        sta BGCARDTILEX
-        txa 
-        clc 
-        adc #$06
-        sta BGCARDTILEY
-        jsr draw_bg_card
+        ldy #0
+        move_stack_to_column7_loop:
+            ; store card from temp slot in column
+            lda MOVETEMPCARDID, y
+            sta BOARDCOL7, x 
+
+            ; draw card in column
+            sta BGCARDID
+            lda #1
+            sta DRAWBGCARD
+            lda #$19
+            sta BGCARDTILEX
+            txa 
+            clc 
+            adc #$06
+            sta BGCARDTILEY
+            txa 
+            pha 
+            tya 
+            pha 
+            jsr draw_bg_card
+            pla 
+            tay 
+            pla 
+            tax 
+
+            ; increment indices and break out of loop if next temp card is empty OR X == 20
+            inx 
+            iny 
+            cpy #13
+            beq move_stack_to_column7_loop_break
+            lda MOVETEMPCARDID, y
+            beq move_stack_to_column7_loop_break
+            cpx #20
+            beq move_stack_to_column7_loop_break
+            ; otherwise continue looping
+            jmp move_stack_to_column7_loop
+        move_stack_to_column7_loop_break:
 
         jmp done_making_move
     move_not_to_column7:
 
     done_making_move:
+
+    ; clear out all of MOVETEMPCARDID
+    lda #0
+    sta MOVETEMPCARDID
+    sta MOVETEMPCARDID+1
+    sta MOVETEMPCARDID+2
+    sta MOVETEMPCARDID+3
+    sta MOVETEMPCARDID+4
+    sta MOVETEMPCARDID+5
+    sta MOVETEMPCARDID+6
+    sta MOVETEMPCARDID+7
+    sta MOVETEMPCARDID+8
+    sta MOVETEMPCARDID+9
+    sta MOVETEMPCARDID+10
+    sta MOVETEMPCARDID+11
+    sta MOVETEMPCARDID+12
+
     rts 
 
 draw_board:

@@ -821,7 +821,7 @@ adjust_click_pos:
         ;lda CURCLICKPOS
         sec 
         sbc #5
-        beq click_not_column1   ; skip adjusting if we clicked the top of the column
+        beq adjust_column1_loop_break   ; skip adjusting if we clicked the top of the column
         tax 
 
         ; increase X by 1 if we are currently clicking the start position
@@ -841,9 +841,10 @@ adjust_click_pos:
             dex 
             adjust_column1_loop_cond:
             cpx #0
-            beq click_not_column1   ; break out of loop if we reached top of column
+            beq adjust_column1_loop_break   ; break out of loop if we reached top of column
             lda BOARDCOL1-1, x 
             beq adjust_column1_loop
+        adjust_column1_loop_break:
         jmp done_adjusting_click_pos
     click_not_column1:
 
@@ -854,7 +855,7 @@ adjust_click_pos:
         ;lda CURCLICKPOS
         sec 
         sbc #25
-        beq click_not_column2   ; skip adjusting if we clicked the top of the column
+        beq adjust_column2_loop_break   ; skip adjusting if we clicked the top of the column
         tax 
 
         ; increase X by 1 if we are currently clicking the start position
@@ -874,9 +875,10 @@ adjust_click_pos:
             dex 
             adjust_column2_loop_cond:
             cpx #0
-            beq click_not_column2   ; break out of loop if we reached top of column
+            beq adjust_column2_loop_break   ; break out of loop if we reached top of column
             lda BOARDCOL2-1, x 
             beq adjust_column2_loop
+        adjust_column2_loop_break:
         jmp done_adjusting_click_pos
     click_not_column2:
 
@@ -887,7 +889,7 @@ adjust_click_pos:
         ;lda CURCLICKPOS
         sec 
         sbc #45
-        beq click_not_column3   ; skip adjusting if we clicked the top of the column
+        beq adjust_column3_loop_break   ; skip adjusting if we clicked the top of the column
         tax 
 
         ; increase X by 1 if we are currently clicking the start position
@@ -907,9 +909,10 @@ adjust_click_pos:
             dex 
             adjust_column3_loop_cond:
             cpx #0
-            beq click_not_column3   ; break out of loop if we reached top of column
+            beq adjust_column3_loop_break   ; break out of loop if we reached top of column
             lda BOARDCOL3-1, x 
             beq adjust_column3_loop
+        adjust_column3_loop_break:
         jmp done_adjusting_click_pos
     click_not_column3:
 
@@ -920,7 +923,7 @@ adjust_click_pos:
         ;lda CURCLICKPOS
         sec 
         sbc #65
-        beq click_not_column4   ; skip adjusting if we clicked the top of the column
+        beq adjust_column4_loop_break   ; skip adjusting if we clicked the top of the column
         tax 
 
         ; increase X by 1 if we are currently clicking the start position
@@ -940,9 +943,10 @@ adjust_click_pos:
             dex 
             adjust_column4_loop_cond:
             cpx #0
-            beq click_not_column4   ; break out of loop if we reached top of column
+            beq adjust_column4_loop_break   ; break out of loop if we reached top of column
             lda BOARDCOL4-1, x 
             beq adjust_column4_loop
+        adjust_column4_loop_break:
         jmp done_adjusting_click_pos
     click_not_column4:
 
@@ -953,7 +957,7 @@ adjust_click_pos:
         ;lda CURCLICKPOS
         sec 
         sbc #85
-        beq click_not_column5   ; skip adjusting if we clicked the top of the column
+        beq adjust_column5_loop_break   ; skip adjusting if we clicked the top of the column
         tax 
 
         ; increase X by 1 if we are currently clicking the start position
@@ -973,9 +977,10 @@ adjust_click_pos:
             dex 
             adjust_column5_loop_cond:
             cpx #0
-            beq click_not_column5   ; break out of loop if we reached top of column
+            beq adjust_column5_loop_break   ; break out of loop if we reached top of column
             lda BOARDCOL5-1, x 
             beq adjust_column5_loop
+        adjust_column5_loop_break:
         jmp done_adjusting_click_pos
     click_not_column5:
 
@@ -986,7 +991,7 @@ adjust_click_pos:
         ;lda CURCLICKPOS
         sec 
         sbc #105
-        beq click_not_column6   ; skip adjusting if we clicked the top of the column
+        beq adjust_column6_loop_break   ; skip adjusting if we clicked the top of the column
         tax 
 
         ; increase X by 1 if we are currently clicking the start position
@@ -1006,9 +1011,10 @@ adjust_click_pos:
             dex 
             adjust_column6_loop_cond:
             cpx #0
-            beq click_not_column6   ; break out of loop if we reached top of column
+            beq adjust_column6_loop_break   ; break out of loop if we reached top of column
             lda BOARDCOL6-1, x 
             beq adjust_column6_loop
+        adjust_column6_loop_break:
         jmp done_adjusting_click_pos
     click_not_column6:
 
@@ -1019,7 +1025,7 @@ adjust_click_pos:
         ;lda CURCLICKPOS
         sec 
         sbc #125
-        beq click_not_column7   ; skip adjusting if we clicked the top of the column
+        beq adjust_column7_loop_break   ; skip adjusting if we clicked the top of the column
         tax 
 
         ; increase X by 1 if we are currently clicking the start position
@@ -1039,9 +1045,10 @@ adjust_click_pos:
             dex 
             adjust_column7_loop_cond:
             cpx #0
-            beq click_not_column7   ; break out of loop if we reached top of column
+            beq adjust_column7_loop_break   ; break out of loop if we reached top of column
             lda BOARDCOL7-1, x 
             beq adjust_column7_loop
+        adjust_column7_loop_break:
         jmp done_adjusting_click_pos
     click_not_column7:
 
