@@ -571,6 +571,25 @@ deal_board:
     lda #0
     sta BOTTOMDECKINDEX
 
+    ; draw the discard pile empty slots
+    lda #1
+    sta DRAWBGDPILE
+    lda #0
+    sta BGDPILEID
+    jsr draw_bg_discard_pile
+
+    lda #1
+    sta BGDPILEID
+    jsr draw_bg_discard_pile
+
+    lda #2
+    sta BGDPILEID
+    jsr draw_bg_discard_pile
+
+    lda #3
+    sta BGDPILEID
+    jsr draw_bg_discard_pile
+
     rts 
 
 get_click_pos:

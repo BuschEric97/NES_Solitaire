@@ -6,6 +6,10 @@
     BGCARDTILENUM: .res 2
     BGCARDHBYTE: .res 1
     BGCARDLBYTE: .res 1
+    DRAWBGDPILE: .res 1
+    BGDPILEID: .res 1       ; #$00 == diamonds, #$01 == hearts, #$02 == spades, #$03 == clubs
+    BGDPILEHBYTE: .res 1
+    BGDPILELBYTE: .res 1
     MOVETEMPCARDID: .res 13
 
 .segment "CODE"
@@ -48,6 +52,164 @@ erase_cursor:
     sta $0203
 
     jsr draw_sprites
+
+    rts 
+
+draw_bg_discard_pile:
+    ; wait for vblank
+    bit $2002
+    vblank_wait_bg_dpile:
+        bit $2002
+        bpl vblank_wait_bg_dpile
+
+    ; disable sprites and background rendering
+    lda #%00000000
+    sta $2001
+
+    ; get the high and low byte of the discard pile position\
+    lda #$20
+    sta BGDPILEHBYTE
+    lda BGDPILEID
+    asl 
+    asl 
+    clc 
+    adc #$50
+    sta BGDPILELBYTE
+
+    ; draw the discard pile
+    lda DRAWBGDPILE
+    bne draw_dpile_on_bg
+        jmp erase_dpile_from_bg
+    draw_dpile_on_bg:
+        ; draw top
+        lda $2002
+        lda BGDPILEHBYTE
+        sta $2006
+        lda BGDPILELBYTE
+        sta $2006
+
+        lda #$76
+        sta $2007
+        lda #$77
+        sta $2007
+        lda #$78
+        sta $2007
+
+        ; draw middle
+        lda BGDPILELBYTE
+        clc 
+        adc #$20
+        sta BGDPILELBYTE
+        lda BGDPILEHBYTE
+        adc #0
+        sta BGDPILEHBYTE
+
+        lda $2002
+        lda BGDPILEHBYTE
+        sta $2006
+        lda BGDPILELBYTE
+        sta $2006
+
+        lda #$86
+        sta $2007
+        lda BGDPILEID
+        asl 
+        clc 
+        adc #$58
+        sta $2007
+        clc 
+        adc #1
+        sta $2007
+
+        ; draw bottom
+        lda BGDPILELBYTE
+        clc 
+        adc #$20
+        sta BGDPILELBYTE
+        lda BGDPILEHBYTE
+        adc #0
+        sta BGDPILEHBYTE
+
+        lda $2002
+        lda BGDPILEHBYTE
+        sta $2006
+        lda BGDPILELBYTE
+        sta $2006
+
+        lda #$96
+        sta $2007
+        lda BGDPILEID
+        asl 
+        clc 
+        adc #$68
+        sta $2007
+        clc 
+        adc #1
+        sta $2007
+
+        jmp done_drawing_bg_dpile
+    erase_dpile_from_bg:
+        ; draw top
+        lda $2002
+        lda BGDPILEHBYTE
+        sta $2006
+        lda BGDPILELBYTE
+        sta $2006
+
+        lda #$2F
+        sta $2007
+        sta $2007
+        sta $2007
+
+        ; draw middle
+        lda BGDPILELBYTE
+        clc 
+        adc #$20
+        sta BGDPILELBYTE
+        lda BGDPILEHBYTE
+        adc #0
+        sta BGDPILEHBYTE
+
+        lda $2002
+        lda BGDPILEHBYTE
+        sta $2006
+        lda BGDPILELBYTE
+        sta $2006
+
+        lda #$2F
+        sta $2007
+        sta $2007
+        sta $2007
+
+        ; draw bottom
+        lda BGDPILELBYTE
+        clc 
+        adc #$20
+        sta BGDPILELBYTE
+        lda BGDPILEHBYTE
+        adc #0
+        sta BGDPILEHBYTE
+
+        lda $2002
+        lda BGDPILEHBYTE
+        sta $2006
+        lda BGDPILELBYTE
+        sta $2006
+
+        lda #$2F
+        sta $2007
+        sta $2007
+        sta $2007
+
+    done_drawing_bg_dpile:
+    ; enable sprites and background rendering
+    lda #%00011110
+    sta $2001
+
+    ; reset scrolling
+    lda #$00
+    sta $2005
+    sta $2005
 
     rts 
 
