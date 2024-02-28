@@ -323,8 +323,9 @@ make_move:
     ; handle card in start position
     ; move from deck
     lda CURMOVESTART
-    bne move_not_from_deck
-        ;move_from_deck:
+    beq move_from_deck
+        jmp move_not_from_deck
+    move_from_deck:
         lda TOPDECKINDEX
         cmp #$FF
         bne move_deck_not_empty
@@ -379,7 +380,9 @@ make_move:
             sta MOVETEMPCARDID
 
             lda TOPDECKINDEX
+            cmp BOTTOMDECKINDEX
             bne move_deck_not_last_card
+                ;move_deck_last_card:
                 lda #0
                 sta DRAWBGCARD
                 lda #$01
@@ -426,6 +429,20 @@ make_move:
             ldx DRAWPILEINDEX
             lda #0
             sta DECK, x 
+
+            lda DRAWPILEINDEX
+            cmp BOTTOMDECKINDEX
+            bne skip_update_bottom_deck_index
+                ; update BOTTOMDECKINDEX with new bottom of deck
+                next_bottom_deck_index_loop:
+                    ldx BOTTOMDECKINDEX
+                    inx 
+                    stx BOTTOMDECKINDEX
+
+                    lda DECK, x 
+                    beq next_bottom_deck_index_loop
+            skip_update_bottom_deck_index:
+
 
             ; move draw pile index back 1 card
             next_draw_pile_index_loop:

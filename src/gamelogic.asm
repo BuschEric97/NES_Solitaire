@@ -567,6 +567,10 @@ deal_board:
     lda #$FF
     sta DRAWPILEINDEX
 
+    ; set bottom deck index
+    lda #0
+    sta BOTTOMDECKINDEX
+
     rts 
 
 get_click_pos:

@@ -10,7 +10,8 @@
     CURCARDID: .res 1       ; HSSVVVVV (H == hidden flag (for drawing the back of the card), SS == suite, VVVVV == value)
     GAMEFLAG: .res 1        ; Flag to indicate when a game is being played
     DECK: .res 52
-    TOPDECKINDEX: .res 1       ; indicates which card is on the top of the deck, equals #$FF if deck is empty, "bottom" of deck is #$00
+    TOPDECKINDEX: .res 1       ; indicates which card is on the top of the deck, equals #$FF if deck is empty
+    BOTTOMDECKINDEX: .res 1    ; indicates which card is on the bottom of the deck, equals #$FF if deck is empty
     DRAWPILE: .res 3
     DRAWPILEINDEX: .res 1      ; indicates which card from the deck is currently the top card of the draw pile, equals #$FF if draw pile is empty
     DISCARDPILES: .res 4
