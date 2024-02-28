@@ -26,7 +26,7 @@
     ; a move position is a number from 0-144
     ;   0 == deck
     ;   1-3 == draw piles
-    ;   4 == discard piles (each discard pile has its suite set by default)
+    ;   145-148 == discard piles
     ;   5-24 == board column 1
     ;   25-44 == board column 2
     ;   45-64 == board column 3

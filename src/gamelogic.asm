@@ -617,23 +617,81 @@ get_click_pos:
     not_click_deck:
 
     ; discard piles
+    ; discard pile 0
     lda CURSORTILEXPOS
     cmp #$10
-    bmi not_click_discard
+    bmi not_click_discard_0
         lda CURSORTILEXPOS
-        cmp #$1F
-        bpl not_click_discard
+        cmp #$13
+        bpl not_click_discard_0
             lda CURSORTILEYPOS
             cmp #$02
-            bmi not_click_discard
+            bmi not_click_discard_0
                 lda CURSORTILEYPOS
                 cmp #$05
-                bpl not_click_discard
+                bpl not_click_discard_0
                     ; discard piles clicked
-                    lda #4
+                    lda #145
                     sta CURCLICKPOS
                     jmp done_get_click_pos
-    not_click_discard:
+    not_click_discard_0:
+
+    ; discard pile 1
+    lda CURSORTILEXPOS
+    cmp #$14
+    bmi not_click_discard_1
+        lda CURSORTILEXPOS
+        cmp #$17
+        bpl not_click_discard_1
+            lda CURSORTILEYPOS
+            cmp #$02
+            bmi not_click_discard_1
+                lda CURSORTILEYPOS
+                cmp #$05
+                bpl not_click_discard_1
+                    ; discard piles clicked
+                    lda #146
+                    sta CURCLICKPOS
+                    jmp done_get_click_pos
+    not_click_discard_1:
+
+    ; discard pile 2
+    lda CURSORTILEXPOS
+    cmp #$18
+    bmi not_click_discard_2
+        lda CURSORTILEXPOS
+        cmp #$1B
+        bpl not_click_discard_2
+            lda CURSORTILEYPOS
+            cmp #$02
+            bmi not_click_discard_2
+                lda CURSORTILEYPOS
+                cmp #$05
+                bpl not_click_discard_2
+                    ; discard piles clicked
+                    lda #147
+                    sta CURCLICKPOS
+                    jmp done_get_click_pos
+    not_click_discard_2:
+
+    ; discard pile 3
+    lda CURSORTILEXPOS
+    cmp #$1C
+    bmi not_click_discard_3
+        lda CURSORTILEXPOS
+        cmp #$1F
+        bpl not_click_discard_3
+            lda CURSORTILEYPOS
+            cmp #$02
+            bmi not_click_discard_3
+                lda CURSORTILEYPOS
+                cmp #$05
+                bpl not_click_discard_3
+                    ; discard piles clicked
+                    lda #148
+                    sta CURCLICKPOS
+                    jmp done_get_click_pos
+    not_click_discard_3:
 
     ; draw piles
     lda CURSORTILEXPOS
