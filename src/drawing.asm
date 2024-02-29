@@ -615,11 +615,11 @@ make_move:
                 ; skip drawing a next card if there are no more cards in the draw pile now
                 lda DRAWPILEINDEX
                 cmp #51
-                beq move_not_from_draw_pile
+                beq move_erase_draw_pile
 
                 ldx DRAWPILEINDEX
                 lda DECK, x 
-                beq move_erase_draw_pile
+                beq next_draw_pile_index_loop
 
             ; draw the new draw pile card from index
             lda #1
