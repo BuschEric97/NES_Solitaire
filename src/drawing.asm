@@ -11,6 +11,8 @@
     BGDPILEHBYTE: .res 1
     BGDPILELBYTE: .res 1
     MOVETEMPCARDID: .res 13
+    MOVECURSORXPOS: .res 1
+    MOVECURSORYPOS: .res 1
 
 .segment "CODE"
 
@@ -27,7 +29,7 @@ draw_sprites:
     
     rts 
 
-draw_cursor:
+draw_cursor_0:
     lda CURSORYPOS
     sta $0200       ; cursor Y pos
 
@@ -44,12 +46,40 @@ draw_cursor:
 
     rts 
 
-erase_cursor:
+erase_cursor_0:
     lda #0
     sta $0200
     sta $0201
     sta $0202
     sta $0203
+
+    jsr draw_sprites
+
+    rts 
+
+draw_cursor_1:
+    lda MOVECURSORYPOS
+    sta $0204
+
+    lda #$01
+    sta $0205
+
+    lda #%00000000
+    sta $0206
+
+    lda MOVECURSORXPOS
+    sta $0207
+
+    jsr draw_sprites
+
+    rts 
+
+erase_cursor_1:
+    lda #0
+    sta $0204
+    sta $0205
+    sta $0206
+    sta $0207
 
     jsr draw_sprites
 

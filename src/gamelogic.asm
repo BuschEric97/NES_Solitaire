@@ -1135,3 +1135,220 @@ adjust_click_pos:
 
     done_adjusting_click_pos:
     rts 
+
+; get the cursor 1 position from current click position
+get_cursor_1_pos:
+    lda CURCLICKPOS
+    cmp #$FF
+    bne cursor_at_a_card
+        lda #0
+        sta MOVECURSORXPOS
+        sta MOVECURSORYPOS
+
+        jmp done_get_cursor_1_pos
+    cursor_at_a_card:
+
+    lda CURCLICKPOS
+    cmp #1
+    bmi cursor_not_at_draw_piles
+        cmp #4
+        bpl cursor_not_at_draw_piles
+            ;cursor_at_draw_piles:
+            lda #$10
+            sta MOVECURSORYPOS
+            lda #$28
+            sta MOVECURSORXPOS
+
+            jmp done_get_cursor_1_pos
+    cursor_not_at_draw_piles:
+
+    lda CURCLICKPOS
+    cmp #145
+    bne cursor_not_at_discard_pile_0
+        ;cursor_at_discard_pile_0:
+        lda #$10
+        sta MOVECURSORYPOS
+        lda #$80
+        sta MOVECURSORXPOS
+
+        jmp done_get_cursor_1_pos
+    cursor_not_at_discard_pile_0:
+
+    lda CURCLICKPOS
+    cmp #146
+    bne cursor_not_at_discard_pile_1
+        ;cursor_at_discard_pile_1:
+        lda #$10
+        sta MOVECURSORYPOS
+        lda #$A0
+        sta MOVECURSORXPOS
+
+        jmp done_get_cursor_1_pos
+    cursor_not_at_discard_pile_1:
+
+    lda CURCLICKPOS
+    cmp #147
+    bne cursor_not_at_discard_pile_2
+        ;cursor_at_discard_pile_2:
+        lda #$10
+        sta MOVECURSORYPOS
+        lda #$C0
+        sta MOVECURSORXPOS
+
+        jmp done_get_cursor_1_pos
+    cursor_not_at_discard_pile_2:
+
+    lda CURCLICKPOS
+    cmp #148
+    bne cursor_not_at_discard_pile_3
+        ;cursor_at_discard_pile_3:
+        lda #$10
+        sta MOVECURSORYPOS
+        lda #$E0
+        sta MOVECURSORXPOS
+
+        jmp done_get_cursor_1_pos
+    cursor_not_at_discard_pile_3:
+
+    lda CURCLICKPOS
+    cmp #5
+    bmi cursor_not_at_column_1
+        cmp #25
+        bpl cursor_not_at_column_1
+            lda #$08
+            sta MOVECURSORXPOS
+            lda CURCLICKPOS
+            sec 
+            sbc #5
+            asl 
+            asl 
+            asl 
+            clc 
+            adc #$30
+            sta MOVECURSORYPOS
+
+            jmp done_get_cursor_1_pos
+    cursor_not_at_column_1:
+
+    lda CURCLICKPOS
+    cmp #25
+    bmi cursor_not_at_column_2
+        cmp #45
+        bpl cursor_not_at_column_2
+            lda #$28
+            sta MOVECURSORXPOS
+            lda CURCLICKPOS
+            sec 
+            sbc #25
+            asl 
+            asl 
+            asl 
+            clc 
+            adc #$30
+            sta MOVECURSORYPOS
+
+            jmp done_get_cursor_1_pos
+    cursor_not_at_column_2:
+
+    lda CURCLICKPOS
+    cmp #45
+    bmi cursor_not_at_column_3
+        cmp #65
+        bpl cursor_not_at_column_3
+            lda #$48
+            sta MOVECURSORXPOS
+            lda CURCLICKPOS
+            sec 
+            sbc #45
+            asl 
+            asl 
+            asl 
+            clc 
+            adc #$30
+            sta MOVECURSORYPOS
+
+            jmp done_get_cursor_1_pos
+    cursor_not_at_column_3:
+
+    lda CURCLICKPOS
+    cmp #65
+    bmi cursor_not_at_column_4
+        cmp #85
+        bpl cursor_not_at_column_4
+            lda #$68
+            sta MOVECURSORXPOS
+            lda CURCLICKPOS
+            sec 
+            sbc #65
+            asl 
+            asl 
+            asl 
+            clc 
+            adc #$30
+            sta MOVECURSORYPOS
+
+            jmp done_get_cursor_1_pos
+    cursor_not_at_column_4:
+
+    lda CURCLICKPOS
+    cmp #85
+    bmi cursor_not_at_column_5
+        cmp #105
+        bpl cursor_not_at_column_5
+            lda #$88
+            sta MOVECURSORXPOS
+            lda CURCLICKPOS
+            sec 
+            sbc #85
+            asl 
+            asl 
+            asl 
+            clc 
+            adc #$30
+            sta MOVECURSORYPOS
+
+            jmp done_get_cursor_1_pos
+    cursor_not_at_column_5:
+
+    lda CURCLICKPOS
+    cmp #105
+    bmi cursor_not_at_column_6
+        cmp #125
+        bpl cursor_not_at_column_6
+            lda #$A8
+            sta MOVECURSORXPOS
+            lda CURCLICKPOS
+            sec 
+            sbc #105
+            asl 
+            asl 
+            asl 
+            clc 
+            adc #$30
+            sta MOVECURSORYPOS
+
+            jmp done_get_cursor_1_pos
+    cursor_not_at_column_6:
+
+    lda CURCLICKPOS
+    cmp #125
+    bmi cursor_not_at_column_7
+        cmp #145
+        bpl cursor_not_at_column_7
+            lda #$C8
+            sta MOVECURSORXPOS
+            lda CURCLICKPOS
+            sec 
+            sbc #125
+            asl 
+            asl 
+            asl 
+            clc 
+            adc #$30
+            sta MOVECURSORYPOS
+
+            jmp done_get_cursor_1_pos
+    cursor_not_at_column_7:
+
+    done_get_cursor_1_pos:
+    rts 

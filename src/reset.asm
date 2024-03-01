@@ -136,7 +136,7 @@ RESET:
     lda #0
     sta GAMEFLAG    ; clear game flag because game is not being played
 
-    jsr erase_cursor
+    jsr erase_cursor_0
 
     jmp game_loop   ; start the wait loop
 

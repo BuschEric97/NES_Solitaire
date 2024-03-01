@@ -123,7 +123,7 @@ game_loop:
 
     ; always draw the cursor when a game is being played
     jsr set_new_cursor_pos
-    jsr draw_cursor
+    jsr draw_cursor_0
     skip_cursor:
 
     ;-----------------;
@@ -149,6 +149,9 @@ game_loop:
                     lda CURCLICKPOS
                     sta CURMOVESTART
 
+                    jsr get_cursor_1_pos
+                    jsr draw_cursor_1
+
                     lda #1
                     sta CURMOVEIND
 
@@ -163,6 +166,8 @@ game_loop:
             a_move_second_press:
                 lda CURCLICKPOS
                 sta CURMOVEEND
+
+                jsr erase_cursor_1
 
                 lda #0
                 sta CURMOVEIND
