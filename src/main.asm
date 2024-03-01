@@ -140,6 +140,11 @@ game_loop:
             jsr get_click_pos
             jsr adjust_click_pos
 
+            ; skip a button logic if the click position is invalid
+            lda CURCLICKPOS
+            cmp #$FF
+            beq a_not_pressed
+
             lda CURMOVEIND
             bne a_move_second_press
                 ;a_move_first_press:
