@@ -3,6 +3,9 @@
     DECKSWAPPOS1: .res 1
     DECKTEMPCARDID: .res 1
     CURCLICKPOS: .res 1
+    MOVEVALSTARTCARD: .res 1
+    MOVEVALENDCARD: .res 1
+    MOVEVALTEMPCARD: .res 1
 
 .segment "CODE"
 
@@ -1351,4 +1354,267 @@ get_cursor_1_pos:
     cursor_not_at_column_7:
 
     done_get_cursor_1_pos:
+    rts 
+
+validate_move:
+    lda #0
+    sta MOVEVALIDATION  ; move is valid unless proven otherwise
+    sta MOVEVALSTARTCARD
+    sta MOVEVALENDCARD
+    sta MOVEVALTEMPCARD
+
+    ; validate move end not on draw piles
+    lda CURMOVEEND
+    cmp #1
+    bmi move_end_not_draw_piles
+        cmp #4
+        bpl move_end_not_draw_piles
+            ;move_end_is_draw_piles:
+            lda #1
+            sta MOVEVALIDATION
+            jmp done_validate_move
+    move_end_not_draw_piles:
+
+    ; get start card
+    lda CURMOVESTART
+    cmp #1
+    beq validation_start_not_on_col
+        cmp #2
+        beq validation_start_not_on_col
+            cmp #3
+            beq validation_start_not_on_col
+                jmp validation_start_on_col
+            validation_start_not_on_col:
+                ldx DRAWPILEINDEX
+                lda DECK, x 
+                and #%01111111
+                sta MOVEVALSTARTCARD
+                jmp done_get_move_start_card
+    validation_start_on_col:
+        sec 
+        sbc #5
+        ldx #0
+        validation_start_card_loop:
+            inx 
+            sec 
+            sbc #20
+            bcs validation_start_card_loop
+        clc 
+        adc #20
+        tay 
+        ; X should now correspond to column (i.e. if X == 3, then we are dealing with column 3)
+        ; Y should now hold the card offset of X column
+
+        txa 
+        cmp #1
+        bne validation_start_col_not_1
+            lda BOARDCOL1, y
+            sta MOVEVALSTARTCARD
+            jmp done_get_move_start_card
+        validation_start_col_not_1:
+        cmp #2
+        bne validation_start_col_not_2
+            lda BOARDCOL2, y
+            sta MOVEVALSTARTCARD
+            jmp done_get_move_start_card
+        validation_start_col_not_2:
+        cmp #3
+        bne validation_start_col_not_3
+            lda BOARDCOL3, y
+            sta MOVEVALSTARTCARD
+            jmp done_get_move_start_card
+        validation_start_col_not_3:
+        cmp #4
+        bne validation_start_col_not_4
+            lda BOARDCOL4, y
+            sta MOVEVALSTARTCARD
+            jmp done_get_move_start_card
+        validation_start_col_not_4:
+        cmp #5
+        bne validation_start_col_not_5
+            lda BOARDCOL5, y
+            sta MOVEVALSTARTCARD
+            jmp done_get_move_start_card
+        validation_start_col_not_5:
+        cmp #6
+        bne validation_start_col_not_6
+            lda BOARDCOL6, y
+            sta MOVEVALSTARTCARD
+            jmp done_get_move_start_card
+        validation_start_col_not_6:
+        cmp #7
+        bne validation_start_col_not_7
+            lda BOARDCOL7, y
+            sta MOVEVALSTARTCARD
+            jmp done_get_move_start_card
+        validation_start_col_not_7:
+            ; get the start card from discard piles
+            lda DISCARDPILES, y
+            sta MOVEVALSTARTCARD
+    done_get_move_start_card:
+
+    ; get end card
+    lda CURMOVEEND
+    cmp #1
+    beq validation_end_not_on_col
+        cmp #2
+        beq validation_end_not_on_col
+            cmp #3
+            beq validation_end_not_on_col
+                jmp validation_end_on_col
+            validation_end_not_on_col:
+                ldx DRAWPILEINDEX
+                lda DECK, x 
+                and #%01111111
+                sta MOVEVALENDCARD
+                jmp done_get_move_end_card
+    validation_end_on_col:
+        sec 
+        sbc #5
+        ldx #0
+        validation_end_card_loop:
+            inx 
+            sec 
+            sbc #20
+            bcs validation_end_card_loop
+        clc 
+        adc #20
+        tay 
+        cpy #0
+        beq validation_end_on_top_col
+            dey 
+        validation_end_on_top_col:
+        ; X should now correspond to column (i.e. if X == 3, then we are dealing with column 3)
+        ; Y should now hold the card offset of X column
+
+        txa 
+        cmp #1
+        bne validation_end_col_not_1
+            lda BOARDCOL1, y
+            sta MOVEVALENDCARD
+            jmp done_get_move_end_card
+        validation_end_col_not_1:
+        cmp #2
+        bne validation_end_col_not_2
+            lda BOARDCOL2, y
+            sta MOVEVALENDCARD
+            jmp done_get_move_end_card
+        validation_end_col_not_2:
+        cmp #3
+        bne validation_end_col_not_3
+            lda BOARDCOL3, y
+            sta MOVEVALENDCARD
+            jmp done_get_move_end_card
+        validation_end_col_not_3:
+        cmp #4
+        bne validation_end_col_not_4
+            lda BOARDCOL4, y
+            sta MOVEVALENDCARD
+            jmp done_get_move_end_card
+        validation_end_col_not_4:
+        cmp #5
+        bne validation_end_col_not_5
+            lda BOARDCOL5, y
+            sta MOVEVALENDCARD
+            jmp done_get_move_end_card
+        validation_end_col_not_5:
+        cmp #6
+        bne validation_end_col_not_6
+            lda BOARDCOL6, y
+            sta MOVEVALENDCARD
+            jmp done_get_move_end_card
+        validation_end_col_not_6:
+        cmp #7
+        bne validation_end_col_not_7
+            lda BOARDCOL7, y
+            sta MOVEVALENDCARD
+            jmp done_get_move_end_card
+        validation_end_col_not_7:
+            ; get the end card from discard piles
+            iny 
+            lda DISCARDPILES, y
+            sta MOVEVALENDCARD
+    done_get_move_end_card:
+
+    ; validate move start card is not hidden
+    lda MOVEVALSTARTCARD
+    and #%10000000
+    beq validation_move_start_not_hidden
+        lda #1
+        sta MOVEVALIDATION
+        jmp done_validate_move
+    validation_move_start_not_hidden:
+
+    ; check if move end is on discard piles
+    lda CURMOVEEND
+    cmp #145
+    bmi move_end_not_discard_piles
+        cmp #149
+        bpl move_end_not_discard_piles
+            ;move_end_is_discard_piles:
+            ; validate move start card is 1 more than corresponding discard pile card
+            lda MOVEVALSTARTCARD
+            and #%00011111
+            sec 
+            sbc #1
+            sta MOVEVALTEMPCARD
+            lda MOVEVALENDCARD
+            and #%00011111
+            sec 
+            sbc MOVEVALTEMPCARD
+            beq move_end_not_discard_piles
+                lda #1
+                sta MOVEVALIDATION
+                jmp done_validate_move
+    move_end_not_discard_piles:
+
+    ; check if move end card is on a column
+    lda CURMOVEEND
+    cmp #5
+    bmi done_validate_move
+        cmp #145
+        bpl done_validate_move
+            ; check if move start card is a king
+            lda MOVEVALSTARTCARD
+            and #%00011111
+            cmp #13
+            bne move_start_not_king
+                ;move_start_is_king:
+                ; validate move end card is an empty card slot
+                lda MOVEVALENDCARD
+                beq validation_end_card_is_empty
+                    lda #1
+                    sta MOVEVALIDATION
+                    jmp done_validate_move
+                validation_end_card_is_empty:
+                jmp done_validate_move
+            move_start_not_king:
+                ; validate move start card is value 1 less than move end card and is opposite color
+                lda MOVEVALSTARTCARD
+                and #%00011111
+                clc 
+                adc #1
+                sta MOVEVALTEMPCARD
+                lda MOVEVALENDCARD
+                and #%00011111
+                cmp MOVEVALTEMPCARD
+                beq validation_start_card_is_1_less
+                    lda #1
+                    sta MOVEVALIDATION
+                    jmp done_validate_move
+                validation_start_card_is_1_less:
+
+                lda MOVEVALSTARTCARD
+                and #%01000000
+                sta MOVEVALTEMPCARD
+                lda MOVEVALENDCARD
+                and #%01000000
+                eor MOVEVALTEMPCARD
+                bne validation_end_card_is_off_color
+                    lda #1
+                    sta MOVEVALIDATION
+                    jmp done_validate_move
+                validation_end_card_is_off_color:
+
+    done_validate_move:
     rts 

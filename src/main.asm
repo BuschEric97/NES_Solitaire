@@ -37,6 +37,7 @@
     CURMOVEIND: .res 1      ; determines where to store click pos on A press: 0 == CURMOVESTART, 1 == CURMOVEEND
     CURMOVESTART: .res 1    ; current move starting board position
     CURMOVEEND: .res 1      ; current move ending board position
+    MOVEVALIDATION: .res 1  ; #$00 == move is valid, #$01 == move is invalid
 
 .segment "VARS"
 
@@ -177,7 +178,10 @@ game_loop:
                 lda #0
                 sta CURMOVEIND
 
-                jsr make_move
+                jsr validate_move
+                lda MOVEVALIDATION
+                bne a_not_pressed
+                    jsr make_move
     a_not_pressed:
 
     ; see if button B was pressed
