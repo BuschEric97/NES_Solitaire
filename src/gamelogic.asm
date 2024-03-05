@@ -1558,10 +1558,17 @@ validate_move:
             sec 
             sbc #1
             sta MOVEVALTEMPCARD
-            lda MOVEVALENDCARD
+            lda MOVEVALSTARTCARD
+            and #%01100000
+            lsr 
+            lsr 
+            lsr 
+            lsr 
+            lsr 
+            tax 
+            lda DISCARDPILES, x
             and #%00011111
-            sec 
-            sbc MOVEVALTEMPCARD
+            cmp MOVEVALTEMPCARD
             beq move_end_not_discard_piles
                 lda #1
                 sta MOVEVALIDATION
