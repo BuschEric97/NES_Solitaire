@@ -51,6 +51,7 @@
 .include "drawing.asm"
 .include "gamelogic.asm"
 
+.include "title.asm"
 .include "nmi.asm"
 .include "irq.asm"
 .include "reset.asm"
