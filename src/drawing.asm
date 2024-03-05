@@ -534,6 +534,13 @@ make_move:
                 dex 
                 stx TOPDECKINDEX
 
+                cpx #0
+                bne top_deck_index_loop_not_end
+                    lda #$FF
+                    sta TOPDECKINDEX
+                    jmp done_making_move
+                top_deck_index_loop_not_end:
+
                 lda DECK, x 
                 beq top_deck_index_loop
             
