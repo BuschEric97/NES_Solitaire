@@ -47,11 +47,8 @@ draw_cursor_0:
     rts 
 
 erase_cursor_0:
-    lda #0
+    lda #$FF
     sta $0200
-    sta $0201
-    sta $0202
-    sta $0203
 
     jsr draw_sprites
 
@@ -75,11 +72,8 @@ draw_cursor_1:
     rts 
 
 erase_cursor_1:
-    lda #0
+    lda #$FF
     sta $0204
-    sta $0205
-    sta $0206
-    sta $0207
 
     jsr draw_sprites
 
