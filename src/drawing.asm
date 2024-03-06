@@ -1872,38 +1872,6 @@ draw_board:
         sta BGCARDTILEY
         jsr draw_bg_card
 
-
-    ; draw the draw piles
-    ; draw pile 0
-    lda DRAWPILE
-    sta DRAWBGCARD          ; if draw pile card id is #$00, this will erase the draw pile card instead
-    sta BGCARDID
-    lda #$05
-    sta BGCARDTILEX
-    lda #$02
-    sta BGCARDTILEY
-    jsr draw_bg_card
-
-    ; draw pile 1
-    lda DRAWPILE+1
-    sta DRAWBGCARD
-    sta BGCARDID
-    lda #$08
-    sta BGCARDTILEX
-    lda #$02
-    sta BGCARDTILEY
-    jsr draw_bg_card
-
-    ; draw pile 2
-    lda DRAWPILE+2
-    sta DRAWBGCARD
-    sta BGCARDID
-    lda #$0B
-    sta BGCARDTILEX
-    lda #$02
-    sta BGCARDTILEY
-    jsr draw_bg_card
-
     ; draw the discard piles
     ; discard piles 0
     lda DISCARDPILES

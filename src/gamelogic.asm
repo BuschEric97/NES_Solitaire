@@ -6,6 +6,7 @@
     MOVEVALSTARTCARD: .res 1
     MOVEVALENDCARD: .res 1
     MOVEVALTEMPCARD: .res 1
+    MOVEVALENDONTOP: .res 1
 
 .segment "CODE"
 
@@ -96,9 +97,6 @@ clear_board:
         cpx #52
         bne loop_thru_clear_deck
     lda #0
-    sta DRAWPILE
-    sta DRAWPILE+1
-    sta DRAWPILE+2
     sta DISCARDPILES
     sta DISCARDPILES+1
     sta DISCARDPILES+2
@@ -1362,6 +1360,8 @@ validate_move:
     sta MOVEVALSTARTCARD
     sta MOVEVALENDCARD
     sta MOVEVALTEMPCARD
+    lda #1
+    sta MOVEVALENDONTOP ; move end is on top of column unless proven otherwise
 
     ; validate move end not on draw piles or deck
     lda CURMOVEEND
@@ -1483,6 +1483,8 @@ validate_move:
         cpy #0
         beq validation_end_on_top_col
             dey 
+            lda #0
+            sta MOVEVALENDONTOP
         validation_end_on_top_col:
         ; X should now correspond to column (i.e. if X == 3, then we are dealing with column 3)
         ; Y should now hold the card offset of X column
@@ -1594,6 +1596,14 @@ validate_move:
             validation_end_card_is_empty:
             jmp done_validate_move
         move_start_not_king:
+            ; validate move end card is not on top of column when not a king
+            lda MOVEVALENDONTOP
+            beq nonking_not_on_top_col
+                lda #1
+                sta MOVEVALIDATION
+                jmp done_validate_move
+            nonking_not_on_top_col:
+
             ; validate move start card is value 1 less than move end card and is opposite color
             lda MOVEVALSTARTCARD
             and #%00011111
