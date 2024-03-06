@@ -1363,9 +1363,9 @@ validate_move:
     sta MOVEVALENDCARD
     sta MOVEVALTEMPCARD
 
-    ; validate move end not on draw piles
+    ; validate move end not on draw piles or deck
     lda CURMOVEEND
-    cmp #1
+    cmp #0
     bmi move_end_not_draw_piles
         cmp #4
         bpl move_end_not_draw_piles
