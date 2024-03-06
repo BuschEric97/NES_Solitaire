@@ -1579,49 +1579,47 @@ validate_move:
     lda CURMOVEEND
     cmp #5
     bmi done_validate_move
-        cmp #145
-        bpl done_validate_move
-            ; check if move start card is a king
+        ; check if move start card is a king
+        lda MOVEVALSTARTCARD
+        and #%00011111
+        cmp #13
+        bne move_start_not_king
+            ;move_start_is_king:
+            ; validate move end card is an empty card slot
+            lda MOVEVALENDCARD
+            beq validation_end_card_is_empty
+                lda #1
+                sta MOVEVALIDATION
+                jmp done_validate_move
+            validation_end_card_is_empty:
+            jmp done_validate_move
+        move_start_not_king:
+            ; validate move start card is value 1 less than move end card and is opposite color
             lda MOVEVALSTARTCARD
             and #%00011111
-            cmp #13
-            bne move_start_not_king
-                ;move_start_is_king:
-                ; validate move end card is an empty card slot
-                lda MOVEVALENDCARD
-                beq validation_end_card_is_empty
-                    lda #1
-                    sta MOVEVALIDATION
-                    jmp done_validate_move
-                validation_end_card_is_empty:
+            clc 
+            adc #1
+            sta MOVEVALTEMPCARD
+            lda MOVEVALENDCARD
+            and #%00011111
+            cmp MOVEVALTEMPCARD
+            beq validation_start_card_is_1_less
+                lda #1
+                sta MOVEVALIDATION
                 jmp done_validate_move
-            move_start_not_king:
-                ; validate move start card is value 1 less than move end card and is opposite color
-                lda MOVEVALSTARTCARD
-                and #%00011111
-                clc 
-                adc #1
-                sta MOVEVALTEMPCARD
-                lda MOVEVALENDCARD
-                and #%00011111
-                cmp MOVEVALTEMPCARD
-                beq validation_start_card_is_1_less
-                    lda #1
-                    sta MOVEVALIDATION
-                    jmp done_validate_move
-                validation_start_card_is_1_less:
+            validation_start_card_is_1_less:
 
-                lda MOVEVALSTARTCARD
-                and #%01000000
-                sta MOVEVALTEMPCARD
-                lda MOVEVALENDCARD
-                and #%01000000
-                eor MOVEVALTEMPCARD
-                bne validation_end_card_is_off_color
-                    lda #1
-                    sta MOVEVALIDATION
-                    jmp done_validate_move
-                validation_end_card_is_off_color:
+            lda MOVEVALSTARTCARD
+            and #%01000000
+            sta MOVEVALTEMPCARD
+            lda MOVEVALENDCARD
+            and #%01000000
+            eor MOVEVALTEMPCARD
+            bne validation_end_card_is_off_color
+                lda #1
+                sta MOVEVALIDATION
+                jmp done_validate_move
+            validation_end_card_is_off_color:
 
     done_validate_move:
     rts 
