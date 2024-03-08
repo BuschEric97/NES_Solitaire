@@ -1488,7 +1488,7 @@ make_move:
                 beq move_stack_to_column1_loop_break
                 lda MOVETEMPCARDID, y
                 beq move_stack_to_column1_loop_break
-                cpx #20
+                cpx #13
                 beq move_stack_to_column1_loop_break
                 ; otherwise continue looping
                 jmp move_stack_to_column1_loop
@@ -1543,7 +1543,7 @@ make_move:
                 beq move_stack_to_column2_loop_break
                 lda MOVETEMPCARDID, y
                 beq move_stack_to_column2_loop_break
-                cpx #20
+                cpx #14
                 beq move_stack_to_column2_loop_break
                 ; otherwise continue looping
                 jmp move_stack_to_column2_loop
@@ -1598,7 +1598,7 @@ make_move:
                 beq move_stack_to_column3_loop_break
                 lda MOVETEMPCARDID, y
                 beq move_stack_to_column3_loop_break
-                cpx #20
+                cpx #15
                 beq move_stack_to_column3_loop_break
                 ; otherwise continue looping
                 jmp move_stack_to_column3_loop
@@ -1653,7 +1653,7 @@ make_move:
                 beq move_stack_to_column4_loop_break
                 lda MOVETEMPCARDID, y
                 beq move_stack_to_column4_loop_break
-                cpx #20
+                cpx #16
                 beq move_stack_to_column4_loop_break
                 ; otherwise continue looping
                 jmp move_stack_to_column4_loop
@@ -1708,7 +1708,7 @@ make_move:
                 beq move_stack_to_column5_loop_break
                 lda MOVETEMPCARDID, y
                 beq move_stack_to_column5_loop_break
-                cpx #20
+                cpx #17
                 beq move_stack_to_column5_loop_break
                 ; otherwise continue looping
                 jmp move_stack_to_column5_loop
@@ -1763,7 +1763,7 @@ make_move:
                 beq move_stack_to_column6_loop_break
                 lda MOVETEMPCARDID, y
                 beq move_stack_to_column6_loop_break
-                cpx #20
+                cpx #18
                 beq move_stack_to_column6_loop_break
                 ; otherwise continue looping
                 jmp move_stack_to_column6_loop
@@ -1818,7 +1818,7 @@ make_move:
                 beq move_stack_to_column7_loop_break
                 lda MOVETEMPCARDID, y
                 beq move_stack_to_column7_loop_break
-                cpx #20
+                cpx #19
                 beq move_stack_to_column7_loop_break
                 ; otherwise continue looping
                 jmp move_stack_to_column7_loop
@@ -1935,7 +1935,7 @@ draw_board:
             tax 
         skip_draw_card_col_1:
         inx 
-        cpx #20
+        cpx #13
         bne draw_col_1_loop
 
     ; column 2
@@ -1959,7 +1959,7 @@ draw_board:
             tax 
         skip_draw_card_col_2:
         inx 
-        cpx #20
+        cpx #14
         bne draw_col_2_loop
 
     ; column 3
@@ -1983,7 +1983,7 @@ draw_board:
             tax 
         skip_draw_card_col_3:
         inx 
-        cpx #20
+        cpx #15
         bne draw_col_3_loop
 
     ; column 4
@@ -2007,7 +2007,7 @@ draw_board:
             tax 
         skip_draw_card_col_4:
         inx 
-        cpx #20
+        cpx #16
         bne draw_col_4_loop
 
     ; column 5
@@ -2031,7 +2031,7 @@ draw_board:
             tax 
         skip_draw_card_col_5:
         inx 
-        cpx #20
+        cpx #17
         bne draw_col_5_loop
 
     ; column 6
@@ -2055,7 +2055,7 @@ draw_board:
             tax 
         skip_draw_card_col_6:
         inx 
-        cpx #20
+        cpx #18
         bne draw_col_6_loop
 
     ; column 7
@@ -2079,7 +2079,7 @@ draw_board:
             tax 
         skip_draw_card_col_7:
         inx 
-        cpx #20
+        cpx #19
         bne draw_col_7_loop
 
     rts 

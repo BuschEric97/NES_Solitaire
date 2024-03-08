@@ -107,49 +107,49 @@ clear_board:
         lda #0
         sta BOARDCOL1, x
         inx 
-        cpx #20
+        cpx #13
         bne loop_thru_clear_col_1
     ldx #0
     loop_thru_clear_col_2:
         lda #0
         sta BOARDCOL2, x
         inx 
-        cpx #20
+        cpx #14
         bne loop_thru_clear_col_2
     ldx #0
     loop_thru_clear_col_3:
         lda #0
         sta BOARDCOL3, x
         inx 
-        cpx #20
+        cpx #15
         bne loop_thru_clear_col_3
     ldx #0
     loop_thru_clear_col_4:
         lda #0
         sta BOARDCOL4, x
         inx 
-        cpx #20
+        cpx #16
         bne loop_thru_clear_col_4
     ldx #0
     loop_thru_clear_col_5:
         lda #0
         sta BOARDCOL5, x
         inx 
-        cpx #20
+        cpx #17
         bne loop_thru_clear_col_5
     ldx #0
     loop_thru_clear_col_6:
         lda #0
         sta BOARDCOL6, x
         inx 
-        cpx #20
+        cpx #18
         bne loop_thru_clear_col_6
     ldx #0
     loop_thru_clear_col_7:
         lda #0
         sta BOARDCOL7, x
         inx 
-        cpx #20
+        cpx #19
         bne loop_thru_clear_col_7
     rts 
 
@@ -907,14 +907,22 @@ adjust_click_pos:
         beq adjust_column1_loop_break   ; skip adjusting if we clicked the top of the column
         tax 
 
+        ; adjust X to bottom of column if we clicked below
+        cpx #14
+        bmi adjust_col1_not_click_below
+            lda #13
+            tax 
+            clc 
+            adc #5
+            sta CURCLICKPOS
+        adjust_col1_not_click_below:
+
         ; increase X by 1 if we are currently clicking the start position
         lda CURMOVEIND
         bne adjust_column1_move_check
             inx 
         adjust_column1_move_check:
 
-        lda BOARDCOL1, x 
-        bne click_not_column1   ; skip adjusting if where we clicked is not empty
         jmp adjust_column1_loop_cond
         adjust_column1_loop:
             lda CURCLICKPOS
@@ -941,14 +949,22 @@ adjust_click_pos:
         beq adjust_column2_loop_break   ; skip adjusting if we clicked the top of the column
         tax 
 
+        ; adjust X to bottom of column if we clicked below
+        cpx #15
+        bmi adjust_col2_not_click_below
+            lda #14
+            tax 
+            clc 
+            adc #25
+            sta CURCLICKPOS
+        adjust_col2_not_click_below:
+
         ; increase X by 1 if we are currently clicking the start position
         lda CURMOVEIND
         bne adjust_column2_move_check
             inx 
         adjust_column2_move_check:
 
-        lda BOARDCOL2, x 
-        bne click_not_column2   ; skip adjusting if where we clicked is not empty
         jmp adjust_column2_loop_cond
         adjust_column2_loop:
             lda CURCLICKPOS
@@ -975,14 +991,22 @@ adjust_click_pos:
         beq adjust_column3_loop_break   ; skip adjusting if we clicked the top of the column
         tax 
 
+        ; adjust X to bottom of column if we clicked below
+        cpx #16
+        bmi adjust_col3_not_click_below
+            lda #15
+            tax 
+            clc 
+            adc #45
+            sta CURCLICKPOS
+        adjust_col3_not_click_below:
+
         ; increase X by 1 if we are currently clicking the start position
         lda CURMOVEIND
         bne adjust_column3_move_check
             inx 
         adjust_column3_move_check:
 
-        lda BOARDCOL3, x 
-        bne click_not_column3   ; skip adjusting if where we clicked is not empty
         jmp adjust_column3_loop_cond
         adjust_column3_loop:
             lda CURCLICKPOS
@@ -1009,14 +1033,22 @@ adjust_click_pos:
         beq adjust_column4_loop_break   ; skip adjusting if we clicked the top of the column
         tax 
 
+        ; adjust X to bottom of column if we clicked below
+        cpx #17
+        bmi adjust_col4_not_click_below
+            lda #16
+            tax 
+            clc 
+            adc #65
+            sta CURCLICKPOS
+        adjust_col4_not_click_below:
+
         ; increase X by 1 if we are currently clicking the start position
         lda CURMOVEIND
         bne adjust_column4_move_check
             inx 
         adjust_column4_move_check:
 
-        lda BOARDCOL4, x 
-        bne click_not_column4   ; skip adjusting if where we clicked is not empty
         jmp adjust_column4_loop_cond
         adjust_column4_loop:
             lda CURCLICKPOS
@@ -1043,14 +1075,22 @@ adjust_click_pos:
         beq adjust_column5_loop_break   ; skip adjusting if we clicked the top of the column
         tax 
 
+        ; adjust X to bottom of column if we clicked below
+        cpx #18
+        bmi adjust_col5_not_click_below
+            lda #17
+            tax 
+            clc 
+            adc #85
+            sta CURCLICKPOS
+        adjust_col5_not_click_below:
+
         ; increase X by 1 if we are currently clicking the start position
         lda CURMOVEIND
         bne adjust_column5_move_check
             inx 
         adjust_column5_move_check:
 
-        lda BOARDCOL5, x 
-        bne click_not_column5   ; skip adjusting if where we clicked is not empty
         jmp adjust_column5_loop_cond
         adjust_column5_loop:
             lda CURCLICKPOS
@@ -1077,14 +1117,22 @@ adjust_click_pos:
         beq adjust_column6_loop_break   ; skip adjusting if we clicked the top of the column
         tax 
 
+        ; adjust X to bottom of column if we clicked below
+        cpx #19
+        bmi adjust_col6_not_click_below
+            lda #18
+            tax 
+            clc 
+            adc #105
+            sta CURCLICKPOS
+        adjust_col6_not_click_below:
+
         ; increase X by 1 if we are currently clicking the start position
         lda CURMOVEIND
         bne adjust_column6_move_check
             inx 
         adjust_column6_move_check:
 
-        lda BOARDCOL6, x 
-        bne click_not_column6   ; skip adjusting if where we clicked is not empty
         jmp adjust_column6_loop_cond
         adjust_column6_loop:
             lda CURCLICKPOS
@@ -1111,14 +1159,22 @@ adjust_click_pos:
         beq adjust_column7_loop_break   ; skip adjusting if we clicked the top of the column
         tax 
 
+        ; adjust X to bottom of column if we clicked below
+        cpx #20
+        bmi adjust_col7_not_click_below
+            lda #19
+            tax 
+            clc 
+            adc #125
+            sta CURCLICKPOS
+        adjust_col7_not_click_below:
+
         ; increase X by 1 if we are currently clicking the start position
         lda CURMOVEIND
         bne adjust_column7_move_check
             inx 
         adjust_column7_move_check:
 
-        lda BOARDCOL7, x 
-        bne click_not_column7   ; skip adjusting if where we clicked is not empty
         jmp adjust_column7_loop_cond
         adjust_column7_loop:
             lda CURCLICKPOS

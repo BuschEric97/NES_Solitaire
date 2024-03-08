@@ -14,15 +14,15 @@
     BOTTOMDECKINDEX: .res 1    ; indicates which card is on the bottom of the deck, equals #$FF if deck is empty
     DRAWPILEINDEX: .res 1      ; indicates which card from the deck is currently the top card of the draw pile, equals #$FF if draw pile is empty
     DISCARDPILES: .res 4
-    BOARDCOL1: .res 20
-    BOARDCOL2: .res 20
-    BOARDCOL3: .res 20
-    BOARDCOL4: .res 20
-    BOARDCOL5: .res 20
-    BOARDCOL6: .res 20
+    BOARDCOL1: .res 14
+    BOARDCOL2: .res 15
+    BOARDCOL3: .res 16
+    BOARDCOL4: .res 17
+    BOARDCOL5: .res 18
+    BOARDCOL6: .res 19
     BOARDCOL7: .res 20
     ; Move Storage Schema:
-    ; a move position is a number from 0-144
+    ; a move position is a number from 0-148
     ;   0 == deck
     ;   1-3 == draw piles
     ;   145-148 == discard piles
