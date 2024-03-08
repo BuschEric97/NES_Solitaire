@@ -7,6 +7,7 @@
     MOVEVALENDCARD: .res 1
     MOVEVALTEMPCARD: .res 1
     MOVEVALENDONTOP: .res 1
+    MOVEVALSTARTCOL: .res 1
 
 .segment "CODE"
 
@@ -1389,6 +1390,10 @@ validate_move:
                 lda DECK, x 
                 and #%01111111
                 sta MOVEVALSTARTCARD
+
+                lda #0
+                sta MOVEVALSTARTCOL
+
                 jmp done_get_move_start_card
     validation_start_on_col:
         sec 
@@ -1404,6 +1409,8 @@ validate_move:
         tay 
         ; X should now correspond to column (i.e. if X == 3, then we are dealing with column 3)
         ; Y should now hold the card offset of X column
+
+        stx MOVEVALSTARTCOL
 
         txa 
         cmp #1
@@ -1488,6 +1495,14 @@ validate_move:
         validation_end_on_top_col:
         ; X should now correspond to column (i.e. if X == 3, then we are dealing with column 3)
         ; Y should now hold the card offset of X column
+
+        ; validate that move start and end columns are not the same
+        cpx MOVEVALSTARTCOL
+        bne validation_diff_cols
+            lda #1
+            sta MOVEVALIDATION
+            jmp done_validate_move
+        validation_diff_cols:
 
         txa 
         cmp #1
