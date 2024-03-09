@@ -7,8 +7,8 @@
     CURSORTILEXPOS: .res 1
     CURSORYPOS: .res 1
     CURSORTILEYPOS: .res 1
-    CURCARDID: .res 1       ; HSSVVVVV (H == hidden flag (for drawing the back of the card), SS == suite, VVVVV == value)
-    GAMEFLAG: .res 1        ; Flag to indicate when a game is being played
+    CURCARDID: .res 1       ; #%HSSVVVVV (H == hidden flag (for drawing the back of the card), SS == suite, VVVVV == value)
+    GAMEFLAG: .res 1        ; #%000000WG (W == win flag, G == game flag)
     DECK: .res 52
     TOPDECKINDEX: .res 1       ; indicates which card is on the top of the deck, equals #$FF if deck is empty
     BOTTOMDECKINDEX: .res 1    ; indicates which card is on the bottom of the deck, equals #$FF if deck is empty
@@ -78,6 +78,7 @@ game_loop:
 
     ; skip cursor code when game is not running
     lda GAMEFLAG
+    and #%00000001
     bne do_cursor_logic
         jmp skip_cursor
     do_cursor_logic:
@@ -137,6 +138,7 @@ game_loop:
     cmp PRESS_A
     bne a_not_pressed
         lda GAMEFLAG
+        and #%00000001
         beq a_not_pressed
             jsr get_click_pos
             jsr adjust_click_pos
@@ -198,6 +200,7 @@ game_loop:
     cmp PRESS_SELECT
     bne select_not_pressed
         lda GAMEFLAG
+        and #%00000001
         beq select_not_pressed
             lda #0
             sta CURMOVESTART
@@ -211,13 +214,14 @@ game_loop:
     cmp PRESS_START
     bne start_not_pressed
         lda GAMEFLAG
+        and #%00000001
         bne start_not_pressed   ; don't allow button START actions when game is being played
             jsr clear_board
             jsr clear_background
             jsr deal_board
             jsr draw_board
 
-            lda #1
+            lda #%00000001
             sta GAMEFLAG    ; set GAMEFLAG to 1 to indicate a game is being played
 
             ; initialize cursor position

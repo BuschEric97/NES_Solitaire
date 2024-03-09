@@ -133,9 +133,10 @@ RESET:
     sta $2005
     sta $2005
 
-    lda #0
+    lda #%00000000
     sta GAMEFLAG    ; clear game flag because game is not being played
 
     jsr erase_cursor_0
+    jsr erase_cursor_1
 
     jmp game_loop   ; start the wait loop
