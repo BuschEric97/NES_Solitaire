@@ -233,5 +233,12 @@ game_loop:
             sta CURSORTILEYPOS
     start_not_pressed:
 
+    ; check if the game has been won
+    lda GAMEFLAG
+    and #%00000001
+    beq game_win_check_done
+        jsr check_for_win
+    game_win_check_done:
+
     ; return to start of game loop
     jmp game_loop

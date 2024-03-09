@@ -1704,3 +1704,29 @@ validate_move:
 
     done_validate_move:
     rts 
+
+check_for_win:
+    lda DISCARDPILES
+    and #%00011111
+    cmp #13
+    bne game_check_not_win
+        lda DISCARDPILES+1
+        and #%00011111
+        cmp #13
+        bne game_check_not_win
+            lda DISCARDPILES+2
+            and #%00011111
+            cmp #13
+            bne game_check_not_win
+                lda DISCARDPILES+3
+                and #%00011111
+                cmp #13
+                bne game_check_not_win
+                    ;game_check_win:
+                    lda #%00000010
+                    sta GAMEFLAG
+                    jsr draw_win_message
+                    jsr erase_cursor_0
+                    jsr erase_cursor_1
+    game_check_not_win:
+    rts 

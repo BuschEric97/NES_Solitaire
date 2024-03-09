@@ -2136,3 +2136,44 @@ clear_background:
     sta $2005
 
     rts 
+
+draw_win_message:
+    ; wait for vblank
+    bit $2002
+    vblank_wait_win_message:
+        bit $2002
+        bpl vblank_wait_win_message
+
+    ; disable sprites and background rendering
+    lda #%00000000
+    sta $2001
+
+    lda $2002
+    lda #$21
+    sta $2006
+    lda #$2C
+    sta $2006
+
+    ldx #$00
+    load_win_message_loop:
+        lda win_message+1, x 
+        sta $2007
+        inx 
+        cpx win_message
+        bne load_win_message_loop
+
+
+    ; enable sprites and background rendering
+    lda #%00011110
+    sta $2001
+
+    ; reset scrolling
+    lda #$00
+    sta $2005
+    sta $2005
+
+    rts 
+
+; first byte is length of message, rest is message
+win_message:
+    .byte $08,$18,$0E,$14,$FF,$16,$08,$0D,$1B
