@@ -592,6 +592,9 @@ deal_board:
     sta BGDPILEID
     jsr draw_bg_discard_pile
 
+    ; reset score
+    jsr clear_score
+
     rts 
 
 get_click_pos:
@@ -1729,4 +1732,113 @@ check_for_win:
                     jsr erase_cursor_0
                     jsr erase_cursor_1
     game_check_not_win:
+    rts 
+
+update_score:
+    lda SCORECHANGE
+    and #%01111111
+    tax 
+    lda SCORECHANGE
+    and #%10000000
+    beq add_score
+        ;subtract_score:
+        subtract_score_loop:
+            ; decrement ones
+            lda SCORE
+            sec 
+            sbc #1
+            sta SCORE
+            bcs done_dec_score
+                ; decrement tens
+                lda #9
+                sta SCORE
+                lda SCORE+1
+                sec 
+                sbc #1
+                sta SCORE+1
+                bcs done_dec_score
+                    ; decrement hundreds
+                    lda #9
+                    sta SCORE+1
+                    lda SCORE+2
+                    sec 
+                    sbc #1
+                    sta SCORE+2
+                    bcs done_dec_score
+                        ; decrement thousands
+                        lda #9
+                        sta SCORE+2
+                        lda SCORE+3
+                        sec 
+                        sbc #1
+                        sta SCORE+3
+                        bcs done_dec_score
+                            lda #0
+                            sta SCORE
+                            sta SCORE+1
+                            sta SCORE+2
+                            sta SCORE+3
+            done_dec_score:
+            dex 
+            cpx #0
+            bne subtract_score_loop
+        jmp done_update_score
+    add_score:
+        add_score_loop:
+            ; increment ones
+            lda SCORE
+            clc 
+            adc #1
+            sta SCORE
+            cmp #10
+            bne done_inc_score
+                ; increment tens
+                lda #0
+                sta SCORE
+                lda SCORE+1
+                clc 
+                adc #1
+                sta SCORE+1
+                cmp #10
+                bne done_inc_score
+                    ; increment hundreds
+                    lda #0
+                    sta SCORE+1
+                    lda SCORE+2
+                    clc 
+                    adc #1
+                    sta SCORE+2
+                    cmp #10
+                    bne done_inc_score
+                        ; increment thousands
+                        lda #0
+                        sta SCORE+2
+                        lda SCORE+3
+                        clc 
+                        adc #1
+                        sta SCORE+3
+                        cmp #10
+                        bne done_inc_score
+                            lda #9
+                            sta SCORE
+                            sta SCORE+1
+                            sta SCORE+2
+                            sta SCORE+3
+            done_inc_score:
+            dex 
+            cpx #0
+            bne add_score_loop
+
+    done_update_score:
+    lda #0
+    sta SCORECHANGE
+    jsr draw_score
+    rts 
+
+clear_score:
+    lda #0
+    sta SCORE
+    sta SCORE+1
+    sta SCORE+2
+    sta SCORE+3
     rts 

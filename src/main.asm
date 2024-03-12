@@ -9,6 +9,8 @@
     CURSORTILEYPOS: .res 1
     CURCARDID: .res 1       ; #%HSSVVVVV (H == hidden flag (for drawing the back of the card), SS == suite, VVVVV == value)
     GAMEFLAG: .res 1        ; #%000000WG (W == win flag, G == game flag)
+    SCORE: .res 4           ; score cannot be lower than 0000 or higher than 9999
+    SCORECHANGE: .res 1     ; #%SVVVVVVV (S == sign (0 == add points, 1 == subtract points), VVVVVVV == value)
     DECK: .res 52
     TOPDECKINDEX: .res 1       ; indicates which card is on the top of the deck, equals #$FF if deck is empty
     BOTTOMDECKINDEX: .res 1    ; indicates which card is on the bottom of the deck, equals #$FF if deck is empty
@@ -71,6 +73,19 @@ game_loop:
     lda seed
     adc #0
     sta seed
+
+    ; do score logic when a game is being played
+    lda GAMEFLAG
+    and #%00000001
+    beq not_update_score
+        ; decrease score by 1 every 256 frames
+        lda seed+1
+        bne not_update_score
+            ;time_score_decrease
+            lda #%10000001
+            sta SCORECHANGE
+            jsr update_score
+    not_update_score:
 
     ;-----------------;
     ; CURSOR HANDLING ;
@@ -220,6 +235,8 @@ game_loop:
             jsr clear_background
             jsr deal_board
             jsr draw_board
+            jsr clear_score
+            jsr draw_score
 
             lda #%00000001
             sta GAMEFLAG    ; set GAMEFLAG to 1 to indicate a game is being played

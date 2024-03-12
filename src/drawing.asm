@@ -2177,3 +2177,64 @@ draw_win_message:
 ; first byte is length of message, rest is message
 win_message:
     .byte $08,$18,$0E,$14,$FF,$16,$08,$0D,$1B
+
+draw_score:
+    ; wait for vblank
+    bit $2002
+    vblank_wait_score:
+        bit $2002
+        bpl vblank_wait_score
+
+    ; disable sprites and background rendering
+    lda #%00000000
+    sta $2001
+
+    lda $2002
+    lda #$23
+    sta $2006
+    lda #$61
+    sta $2006
+
+    lda #$12
+    sta $2007
+    lda #$02
+    sta $2007
+    lda #$0E
+    sta $2007
+    lda #$11
+    sta $2007
+    lda #$04
+    sta $2007
+    lda #$2D
+    sta $2007
+
+    lda #$FF
+    sta $2007
+
+    lda SCORE+3
+    clc 
+    adc #$20
+    sta $2007
+    lda SCORE+2
+    clc 
+    adc #$20
+    sta $2007
+    lda SCORE+1
+    clc 
+    adc #$20
+    sta $2007
+    lda SCORE
+    clc 
+    adc #$20
+    sta $2007
+
+    ; enable sprites and background rendering
+    lda #%00011110
+    sta $2001
+
+    ; reset scrolling
+    lda #$00
+    sta $2005
+    sta $2005
+
+    rts 
