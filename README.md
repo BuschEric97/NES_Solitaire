@@ -35,3 +35,19 @@ Note that if you're moving a card on top of another card, you must have the curs
 The below diagram shows in green where a valid move will be. Note also that pressing A when the cursor is below any existing card will result in the card moving to the closest spot in the column provided that the move is a legal move in Solitaire.
 
 ![movement diagram](https://github.com/BuschEric97/NES_Solitaire/assets/36495578/92ea1819-cda7-4be9-9c13-28614a252c6f)
+
+---
+
+Scoring:
+
+Moving to column from draw pile: +5 points
+
+Moving to discard piles: +10 points
+
+Flipping over hidden card: +5 points
+
+Moving from discard piles: -15 points
+
+Refreshing deck (after first time): -30 points
+
+Every 256 frames: -1 point
