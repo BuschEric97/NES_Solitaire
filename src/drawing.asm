@@ -625,13 +625,11 @@ make_move:
         beq move_not_from_draw_pile
             ; add score bonus if CURMOVEEND is on a column
             lda CURMOVEEND
-            cmp #5
-            bmi no_score_from_draw_pile
-                cmp #145
-                bpl no_score_from_draw_pile
-                    lda #%00000101
-                    sta SCORECHANGE
-                    jsr update_score
+            cmp #145
+            bpl no_score_from_draw_pile
+                lda #%00000101
+                sta SCORECHANGE
+                jsr update_score
             no_score_from_draw_pile:
 
             ; store draw pile card into temp slot
