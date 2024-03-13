@@ -11,6 +11,7 @@
     GAMEFLAG: .res 1        ; #%000000WG (W == win flag, G == game flag)
     SCORE: .res 4           ; score cannot be lower than 0000 or higher than 9999
     SCORECHANGE: .res 1     ; #%SVVVVVVV (S == sign (0 == add points, 1 == subtract points), VVVVVVV == value)
+    SHUFFLES: .res 1        ; counter for how many times deck has been refreshed
     DECK: .res 52
     TOPDECKINDEX: .res 1       ; indicates which card is on the top of the deck, equals #$FF if deck is empty
     BOTTOMDECKINDEX: .res 1    ; indicates which card is on the bottom of the deck, equals #$FF if deck is empty

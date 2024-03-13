@@ -559,6 +559,18 @@ make_move:
             sta BGCARDTILEY
             jsr draw_bg_card
 
+            ; increment shuffle counter
+            lda SHUFFLES
+            beq not_first_shuffle
+                ; subtract score penalty
+                lda #%10011110
+                sta SCORECHANGE
+                jsr update_score
+            not_first_shuffle:
+            ldx SHUFFLES
+            inx 
+            stx SHUFFLES
+
             jmp done_making_move
         move_deck_not_empty:
             ; update draw pile index
@@ -611,6 +623,17 @@ make_move:
         lda DRAWPILEINDEX
         cmp #$FF
         beq move_not_from_draw_pile
+            ; add score bonus if CURMOVEEND is on a column
+            lda CURMOVEEND
+            cmp #5
+            bmi no_score_from_draw_pile
+                cmp #145
+                bpl no_score_from_draw_pile
+                    lda #%00000101
+                    sta SCORECHANGE
+                    jsr update_score
+            no_score_from_draw_pile:
+
             ; store draw pile card into temp slot
             ldx DRAWPILEINDEX
             lda DECK, x 
@@ -697,6 +720,11 @@ make_move:
             ; store discard pile card into temp slot
             lda DISCARDPILES, x 
             sta MOVETEMPCARDID
+
+            ; subtract score penalty
+            lda #%10001111
+            sta SCORECHANGE
+            jsr update_score
 
             ; decrement the discard pile card, if discard pile card was an ace draw the empty discard pile slot instead
             lda DISCARDPILES, x 
@@ -811,6 +839,14 @@ make_move:
                 sec 
                 sbc #%10000000
                 sta BOARDCOL1, x 
+
+                txa 
+                pha 
+                lda #%00000101
+                sta SCORECHANGE
+                jsr update_score
+                pla 
+                tax 
             column1_below_card_already_shown:
 
             ; redraw the card below if there is one
@@ -903,6 +939,14 @@ make_move:
                 sec 
                 sbc #%10000000
                 sta BOARDCOL2, x 
+
+                txa 
+                pha 
+                lda #%00000101
+                sta SCORECHANGE
+                jsr update_score
+                pla 
+                tax 
             column2_below_card_already_shown:
 
             ; redraw the card below if there is one
@@ -995,6 +1039,14 @@ make_move:
                 sec 
                 sbc #%10000000
                 sta BOARDCOL3, x 
+
+                txa 
+                pha 
+                lda #%00000101
+                sta SCORECHANGE
+                jsr update_score
+                pla 
+                tax 
             column3_below_card_already_shown:
 
             ; redraw the card below if there is one
@@ -1087,6 +1139,14 @@ make_move:
                 sec 
                 sbc #%10000000
                 sta BOARDCOL4, x 
+
+                txa 
+                pha 
+                lda #%00000101
+                sta SCORECHANGE
+                jsr update_score
+                pla 
+                tax 
             column4_below_card_already_shown:
 
             ; redraw the card below if there is one
@@ -1179,6 +1239,14 @@ make_move:
                 sec 
                 sbc #%10000000
                 sta BOARDCOL5, x 
+
+                txa 
+                pha 
+                lda #%00000101
+                sta SCORECHANGE
+                jsr update_score
+                pla 
+                tax 
             column5_below_card_already_shown:
 
             ; redraw the card below if there is one
@@ -1271,6 +1339,14 @@ make_move:
                 sec 
                 sbc #%10000000
                 sta BOARDCOL6, x 
+
+                txa 
+                pha 
+                lda #%00000101
+                sta SCORECHANGE
+                jsr update_score
+                pla 
+                tax 
             column6_below_card_already_shown:
 
             ; redraw the card below if there is one
@@ -1363,6 +1439,14 @@ make_move:
                 sec 
                 sbc #%10000000
                 sta BOARDCOL7, x 
+
+                txa 
+                pha 
+                lda #%00000101
+                sta SCORECHANGE
+                jsr update_score
+                pla 
+                tax 
             column7_below_card_already_shown:
 
             ; redraw the card below if there is one
@@ -1409,6 +1493,11 @@ make_move:
         cmp #149
         bpl move_not_to_discard_piles
             ;move_to_discard_piles:
+            ; add score bonus
+            lda #%00001010
+            sta SCORECHANGE
+            jsr update_score
+
             lda MOVETEMPCARDID
             and #%01100000
             lsr 
