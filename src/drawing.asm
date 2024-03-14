@@ -709,6 +709,11 @@ make_move:
         cmp #149
         bpl move_not_from_discard_piles
             ;move_from_discard_piles:
+            ; subtract score penalty
+            lda #%10001111
+            sta SCORECHANGE
+            jsr update_score
+
             ; store which discard pile was clicked into X
             lda CURMOVESTART
             sec 
@@ -718,11 +723,6 @@ make_move:
             ; store discard pile card into temp slot
             lda DISCARDPILES, x 
             sta MOVETEMPCARDID
-
-            ; subtract score penalty
-            lda #%10001111
-            sta SCORECHANGE
-            jsr update_score
 
             ; decrement the discard pile card, if discard pile card was an ace draw the empty discard pile slot instead
             lda DISCARDPILES, x 
